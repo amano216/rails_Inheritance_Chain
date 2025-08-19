@@ -118,7 +118,7 @@
         }
         table {
             width: 100%;
-            min-width: 1200px;
+            min-width: 1000px;
             border-collapse: collapse;
         }
         th, td {
@@ -137,32 +137,6 @@
             top: 0;
             z-index: 10;
             white-space: nowrap;
-        }
-        /* 列幅の調整 */
-        th:nth-child(1),
-        td:nth-child(1) {
-            width: 15%;
-            min-width: 180px;
-        }
-        th:nth-child(2),
-        td:nth-child(2) {
-            width: 20%;
-            min-width: 240px;
-        }
-        th:nth-child(3),
-        td:nth-child(3) {
-            width: 25%;
-            min-width: 300px;
-        }
-        th:nth-child(4),
-        td:nth-child(4) {
-            width: 15%;
-            min-width: 180px;
-        }
-        th:nth-child(5),
-        td:nth-child(5) {
-            width: 25%;
-            min-width: 300px;
         }
         tr:nth-child(even) {
             background-color: #f2f2f2;
@@ -189,6 +163,17 @@
         td code {
             margin: 2px 0;
         }
+        .category-header {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+        .sub-category {
+            background-color: #34495e;
+            color: #ecf0f1;
+            font-weight: bold;
+        }
         /* レスポンシブ対応 */
         @media screen and (max-width: 1400px) {
             .container {
@@ -208,8 +193,8 @@
     </div>
 
     <div class="container">
-        <h1>Railsファミリー【完全版】- ページ2 (詳細機能編)</h1>
-        <p>Railsの全ての主要な親子関係と高度な機能を網羅的に解説します。</p>
+        <h1>Railsファミリー【完全版】- ページ2 (全主要クラス編)</h1>
+        <p>Railsの全ての主要な親子関係と重要なクラス・メソッドを網羅的に解説します。</p>
         
         <div class="navigation">
             <a href="index.html">← ページ1へ戻る</a>
@@ -219,531 +204,630 @@
         <table>
             <thead>
                 <tr>
-                    <th>大おじいちゃん<br>(Railsの主要機能)</th>
-                    <th>お父さん・お母さん<br>(主要クラス)</th>
-                    <th>子・孫<br>(メソッド・プロパティ)</th>
-                    <th>英語の意味</th>
-                    <th>解説</th>
+                    <th style="width: 20%;">大おじいちゃん<br>(Railsの主要機能)</th>
+                    <th style="width: 28%;">お父さん・お母さん<br>(主要クラス)</th>
+                    <th style="width: 30%;">子・孫<br>(メソッド・プロパティ)</th>
+                    <th style="width: 22%;">解説</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- ActiveRecord 詳細機能 -->
+                <!-- ActiveRecord セクション -->
+                <tr class="category-header">
+                    <td colspan="4">🗄️ ActiveRecord - データベース関連の全機能</td>
+                </tr>
+                
                 <tr>
-                    <td rowspan="15" class="family-head"><strong>ActiveRecord</strong><br>(データベース詳細)</td>
-                    <td rowspan="4"><code>ActiveRecord::QueryMethods</code><br>(クエリメソッド群)</td>
-                    <td><code>select, joins, left_joins, includes, eager_load, preload</code></td>
-                    <td>選択する, 結合する, 左結合する, 含める, 即座読込, 事前読込</td>
-                    <td>【最適化系】N+1問題を防ぐための関連データ読み込みや、SQLの最適化を行います。</td>
+                    <td rowspan="20" class="family-head"><strong>ActiveRecord</strong><br>(データベース担当)</td>
+                    <td><code>ActiveRecord::Base</code><br>(モデルの親)</td>
+                    <td><code>find, where, create, update, destroy, save, valid?</code></td>
+                    <td>データベースのデータを操作するための基本機能。すべてのモデルクラスはこれを継承します。</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="2"><code>ActiveRecord::Associations</code><br>(関連系)</td>
+                    <td><code>belongs_to, has_one, has_many, has_many :through</code></td>
+                    <td>1対1、1対多の関係を定義。例：ユーザーが複数の投稿を持つ。</td>
+                </tr>
+                <tr>
+                    <td><code>has_and_belongs_to_many</code></td>
+                    <td>多対多の関係を定義。例：投稿とタグの関係。</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="2"><code>ActiveRecord::Migration</code><br>(設計図の管理者)</td>
+                    <td><code>create_table, drop_table, rename_table</code></td>
+                    <td>テーブルの作成・削除・名前変更。データベースの構造を変更します。</td>
+                </tr>
+                <tr>
+                    <td><code>add_column, remove_column, change_column, add_index</code></td>
+                    <td>カラム（列）の追加・削除・変更、インデックスの追加。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActiveRecord::Scope</code><br>(検索のショートカット)</td>
+                    <td><code>scope, default_scope</code></td>
+                    <td>よく使う検索条件に名前を付けて再利用。例：scope :published, -> { where(published: true) }</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="2"><code>ActiveRecord::Validations</code><br>(検証系)</td>
+                    <td><code>validates, validates_presence_of, validates_uniqueness_of</code></td>
+                    <td>データの妥当性チェック。空でないか、重複していないかなどを検証。</td>
+                </tr>
+                <tr>
+                    <td><code>validates_length_of, validates_format_of, validates_inclusion_of</code></td>
+                    <td>文字数、形式、選択肢の範囲などの詳細な検証。</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="2"><code>ActiveRecord::Callbacks</code><br>(コールバック)</td>
+                    <td><code>before_validation, after_validation, before_save, after_save</code></td>
+                    <td>データ保存の各段階で自動実行される処理を定義。</td>
+                </tr>
+                <tr>
+                    <td><code>before_create, after_create, before_destroy, after_destroy</code></td>
+                    <td>作成時・削除時に特定の処理を自動実行。</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="3"><code>ActiveRecord::QueryMethods</code><br>(クエリメソッド群)</td>
+                    <td><code>select, joins, includes, eager_load, preload</code></td>
+                    <td>N+1問題を防ぐための関連データの効率的な読み込み。</td>
                 </tr>
                 <tr>
                     <td><code>group, having, order, limit, offset, distinct</code></td>
-                    <td>グループ化, 〜を持つ, 並び替え, 制限, オフセット, 重複除去</td>
-                    <td>【集計・並び替え系】データのグループ化、並び替え、ページネーション処理を行います。</td>
+                    <td>グループ化、並び替え、件数制限など、SQLの高度な操作。</td>
                 </tr>
                 <tr>
                     <td><code>pluck, pick, ids, count, sum, average, minimum, maximum</code></td>
-                    <td>摘み取る, 選ぶ, ID群, 数える, 合計, 平均, 最小, 最大</td>
-                    <td>【集計系】特定カラムの値だけを効率的に取得したり、集計計算を行います。</td>
+                    <td>特定カラムの値取得や集計計算を効率的に実行。</td>
                 </tr>
-                <tr>
-                    <td><code>lock, readonly, from, reorder, reverse_order, unscope</code></td>
-                    <td>ロック, 読み取り専用, 〜から, 再並び替え, 逆順, スコープ解除</td>
-                    <td>【制御系】トランザクション制御やクエリの細かい調整を行います。</td>
-                </tr>
-                <tr>
-                    <td rowspan="3"><code>ActiveRecord::Relation</code><br>(リレーション)</td>
-                    <td><code>to_sql, explain, load, reload, reset</code></td>
-                    <td>SQLへ変換, 実行計画, 読み込み, 再読み込み, リセット</td>
-                    <td>【デバッグ系】生成されるSQLの確認やクエリのデバッグ、キャッシュ制御を行います。</td>
-                </tr>
-                <tr>
-                    <td><code>merge, and, or, not</code></td>
-                    <td>結合, かつ, または, 否定</td>
-                    <td>【条件結合系】複数の条件を論理的に結合してクエリを構築します。</td>
-                </tr>
-                <tr>
-                    <td><code>exists?, any?, none?, one?, many?, empty?</code></td>
-                    <td>存在する？, いずれか？, ない？, 1つ？, 複数？, 空？</td>
-                    <td>【判定系】レコードの存在や数を効率的にチェックします。</td>
-                </tr>
-                <tr>
-                    <td rowspan="2"><code>ActiveRecord::Schema</code><br>(スキーマ定義)</td>
-                    <td><code>create_join_table, drop_table, rename_table</code></td>
-                    <td>結合テーブル作成, テーブル削除, テーブル名変更</td>
-                    <td>【テーブル操作系】データベースのテーブル構造を変更します。</td>
-                </tr>
-                <tr>
-                    <td><code>add_index, remove_index, add_foreign_key, remove_foreign_key</code></td>
-                    <td>索引追加, 索引削除, 外部キー追加, 外部キー削除</td>
-                    <td>【制約系】パフォーマンス改善のためのインデックスや、データ整合性のための外部キー制約を管理します。</td>
-                </tr>
-                <tr>
-                    <td rowspan="2"><code>ActiveRecord::Callbacks</code><br>(コールバック)</td>
-                    <td><code>before_validation, after_validation, before_create, after_create</code></td>
-                    <td>検証前, 検証後, 作成前, 作成後</td>
-                    <td>【作成時フック】レコード作成時の各段階で自動実行される処理を定義します。</td>
-                </tr>
-                <tr>
-                    <td><code>before_update, after_update, before_destroy, after_destroy</code></td>
-                    <td>更新前, 更新後, 削除前, 削除後</td>
-                    <td>【更新・削除時フック】レコード更新・削除時に自動実行される処理を定義します。</td>
-                </tr>
+                
                 <tr>
                     <td><code>ActiveRecord::Transactions</code><br>(トランザクション)</td>
                     <td><code>transaction, after_commit, after_rollback</code></td>
-                    <td>取引, コミット後, ロールバック後</td>
-                    <td>複数の処理をまとめて実行し、エラー時は全て取り消す仕組みです。</td>
+                    <td>複数の処理をまとめて実行し、エラー時は全て取り消す仕組み。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActiveRecord::Enum</code><br>(列挙型)</td>
-                    <td><code>enum, *?, *!</code></td>
-                    <td>列挙, 〜か？, 〜にする！</td>
-                    <td>ステータスなど決まった値の組み合わせを、分かりやすい名前で扱えるようにします。</td>
+                    <td><code>enum status: { draft: 0, published: 1 }</code></td>
+                    <td>ステータスなど決まった値を、分かりやすい名前で扱う。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActiveRecord::Store</code><br>(ストア)</td>
                     <td><code>store, store_accessor</code></td>
-                    <td>保管, 保管アクセサ</td>
-                    <td>JSON形式でデータを1つのカラムに保存し、複数の属性として扱う機能です。</td>
+                    <td>JSON形式でデータを1つのカラムに保存し、複数の属性として扱う。</td>
                 </tr>
                 
-                <!-- ActionController 詳細機能 -->
                 <tr>
-                    <td rowspan="10" class="family-head"><strong>ActionController</strong><br>(コントローラー詳細)</td>
-                    <td rowspan="2"><code>ActionController::Streaming</code><br>(ストリーミング)</td>
-                    <td><code>send_file, send_data</code></td>
-                    <td>ファイル送信, データ送信</td>
-                    <td>【ファイル配信系】ファイルやバイナリデータをブラウザに送信します。</td>
+                    <td><code>ActiveRecord::Locking</code><br>(ロック機能)</td>
+                    <td><code>lock, with_lock, optimistic_locking</code></td>
+                    <td>同時更新を防ぐためのデータロック機能。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActiveRecord::Serialization</code><br>(シリアライズ)</td>
+                    <td><code>serialize, serialized_attributes</code></td>
+                    <td>配列やハッシュなどのRubyオブジェクトをデータベースに保存。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActiveRecord::Relation</code><br>(リレーション)</td>
+                    <td><code>to_sql, explain, exists?, any?, none?, one?, many?</code></td>
+                    <td>SQLの確認、クエリの実行計画、レコードの存在チェック。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActiveRecord::Schema</code><br>(スキーマ定義)</td>
+                    <td><code>create_join_table, add_foreign_key, remove_foreign_key</code></td>
+                    <td>結合テーブルの作成、外部キー制約の管理。</td>
+                </tr>
+                
+                <!-- ActionController セクション -->
+                <tr class="category-header">
+                    <td colspan="4">🎮 ActionController - リクエスト処理の全機能</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="15" class="family-head"><strong>ActionController</strong><br>(司令塔担当)</td>
+                    <td><code>ActionController::Base</code><br>(コントローラーの親)</td>
+                    <td><code>render, redirect_to, params, session, flash, cookies</code></td>
+                    <td>ユーザーのリクエストに応じて処理を振り分ける司令塔の基本機能。</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="2"><code>ActionController::Filters</code><br>(フィルター系)</td>
+                    <td><code>before_action, after_action, around_action</code></td>
+                    <td>アクションの前後に共通処理を実行。例：ログインチェック。</td>
                 </tr>
                 <tr>
-                    <td><code>stream</code></td>
-                    <td>流す</td>
-                    <td>【リアルタイム配信】大きなデータを少しずつ送信して、メモリ効率を向上させます。</td>
+                    <td><code>skip_before_action, only, except</code></td>
+                    <td>特定のアクションだけフィルターを除外。ログイン画面でログインチェックをスキップなど。</td>
                 </tr>
+                
+                <tr>
+                    <td><code>ActionController::StrongParameters</code><br>(データ保護系)</td>
+                    <td><code>require, permit, fetch</code></td>
+                    <td>Mass Assignment攻撃を防ぐため、許可されたパラメータのみを受け取る。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionController::RequestForgeryProtection</code><br>(セキュリティ)</td>
+                    <td><code>protect_from_forgery, form_authenticity_token</code></td>
+                    <td>CSRF攻撃を防ぐためのセキュリティ機能。通常は自動で設定される。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionDispatch::Request</code><br>(リクエスト情報)</td>
+                    <td><code>get?, post?, remote_ip, user_agent, xhr?</code></td>
+                    <td>ユーザーからのリクエストの詳細情報。requestという変数でアクセス。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionController::Streaming</code><br>(ストリーミング)</td>
+                    <td><code>send_file, send_data, stream</code></td>
+                    <td>ファイルやデータをブラウザに送信。大きなファイルの効率的な配信。</td>
+                </tr>
+                
                 <tr>
                     <td rowspan="2"><code>ActionController::Caching</code><br>(キャッシュ)</td>
                     <td><code>caches_page, caches_action, cache</code></td>
-                    <td>ページキャッシュ, アクションキャッシュ, キャッシュ</td>
-                    <td>【高速化系】処理結果を一時保存して、同じリクエストに対して高速にレスポンスを返します。</td>
+                    <td>処理結果を一時保存して高速化。</td>
                 </tr>
                 <tr>
                     <td><code>expire_page, expire_action, expire_fragment</code></td>
-                    <td>ページ期限切れ, アクション期限切れ, 断片期限切れ</td>
-                    <td>【キャッシュ削除系】保存されたキャッシュを削除して最新の情報を表示させます。</td>
+                    <td>保存されたキャッシュを削除して最新情報を表示。</td>
                 </tr>
-                <tr>
-                    <td rowspan="2"><code>ActionController::Filters</code><br>(フィルター)</td>
-                    <td><code>around_action, prepend_before_action, append_after_action</code></td>
-                    <td>アクションの周り, 前処理を先頭追加, 後処理を末尾追加</td>
-                    <td>【処理順序制御】フィルターの実行順序を細かく制御します。</td>
-                </tr>
-                <tr>
-                    <td><code>skip_after_action, only, except</code></td>
-                    <td>後処理スキップ, 〜のみ, 〜以外</td>
-                    <td>【適用制御】特定のアクションに対してのみフィルターを適用・除外します。</td>
-                </tr>
+                
                 <tr>
                     <td><code>ActionController::Rescue</code><br>(エラー処理)</td>
                     <td><code>rescue_from, rescue_with_handler</code></td>
-                    <td>〜から救出, ハンドラーで救出</td>
-                    <td>特定の例外が発生した時の処理を定義して、エラー画面をカスタマイズします。</td>
+                    <td>特定の例外が発生した時の処理を定義。エラー画面のカスタマイズ。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActionController::HttpAuthentication</code><br>(認証)</td>
                     <td><code>authenticate_with_http_basic, authenticate_with_http_token</code></td>
-                    <td>Basic認証, トークン認証</td>
-                    <td>HTTPレベルでのユーザー認証を実装します。</td>
+                    <td>HTTPレベルでのユーザー認証を実装。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActionController::Cookies</code><br>(クッキー)</td>
                     <td><code>cookies.permanent, cookies.signed, cookies.encrypted</code></td>
-                    <td>永続的, 署名付き, 暗号化</td>
-                    <td>クッキーの保存期間やセキュリティレベルを制御します。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionController::StrongParameters</code><br>(パラメータ保護)</td>
-                    <td><code>require, permit, fetch</code></td>
-                    <td>必須, 許可, 取得</td>
-                    <td>Mass Assignment攻撃を防ぐため、許可されたパラメータのみを受け取ります。</td>
+                    <td>クッキーの保存期間やセキュリティレベルを制御。</td>
                 </tr>
                 
-                <!-- ActionView 詳細機能 -->
                 <tr>
-                    <td rowspan="8" class="family-head"><strong>ActionView</strong><br>(ビュー詳細)</td>
-                    <td rowspan="2"><code>ActionView::Partials</code><br>(部分テンプレート)</td>
-                    <td><code>render partial:, collection:, as:, locals:</code></td>
-                    <td>部分的に描画, コレクション, として, ローカル変数</td>
-                    <td>【再利用系】HTMLの一部を別ファイルに分けて、複数の場所で使い回します。</td>
+                    <td><code>ActionController::Head</code><br>(ヘッダー)</td>
+                    <td><code>head, headers</code></td>
+                    <td>HTTPヘッダーのみを返す。APIで使用。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionController::Renderers</code><br>(レンダラー)</td>
+                    <td><code>respond_to, format.json, format.xml</code></td>
+                    <td>リクエストの形式に応じて異なる形式でレスポンスを返す。</td>
+                </tr>
+                
+                <!-- ActionView セクション -->
+                <tr class="category-header">
+                    <td colspan="4">🎨 ActionView - ビュー生成の全機能</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="12" class="family-head"><strong>ActionView</strong><br>(見た目担当)</td>
+                    <td><code>ActionView::Base</code><br>(ビューの親)</td>
+                    <td>(ヘルパーメソッド群)</td>
+                    <td>HTMLを生成するビューファイル（.html.erb）の基盤機能。</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="2"><code>ActionView::Helpers</code><br>(便利道具モジュール)</td>
+                    <td><code>link_to, image_tag, form_with, button_to</code></td>
+                    <td>HTMLタグを簡単に作るための便利メソッド群。</td>
                 </tr>
                 <tr>
-                    <td><code>render layout:</code></td>
-                    <td>レイアウトを描画</td>
-                    <td>部分テンプレートに対して特定のレイアウトを適用します。</td>
+                    <td><code>number_to_currency, number_to_percentage, number_with_delimiter</code></td>
+                    <td>数値を通貨表示や％表示など、見やすい形式に変換。</td>
                 </tr>
+                
+                <tr>
+                    <td><code>ActionView::Layouts</code><br>(レイアウト機能)</td>
+                    <td><code>layout, content_for, yield</code></td>
+                    <td>共通レイアウトと各ページ固有のコンテンツを組み合わせる仕組み。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionView::Partials</code><br>(部分テンプレート)</td>
+                    <td><code>render partial:, collection:, locals:</code></td>
+                    <td>HTMLの一部を別ファイルに分けて再利用。</td>
+                </tr>
+                
                 <tr>
                     <td rowspan="2"><code>ActionView::FormBuilder</code><br>(フォームビルダー)</td>
                     <td><code>text_field, password_field, text_area, check_box, radio_button</code></td>
-                    <td>テキスト欄, パスワード欄, テキストエリア, チェックボックス, ラジオボタン</td>
-                    <td>【入力フィールド系】様々な種類の入力フォームを生成します。</td>
+                    <td>様々な種類の入力フォームを生成。</td>
                 </tr>
                 <tr>
                     <td><code>select, collection_select, date_select, time_select</code></td>
-                    <td>選択, コレクション選択, 日付選択, 時刻選択</td>
-                    <td>【選択系】ドロップダウンや日時選択フォームを生成します。</td>
+                    <td>ドロップダウンや日時選択フォームを生成。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActionView::AssetTagHelper</code><br>(アセットタグ)</td>
                     <td><code>javascript_include_tag, stylesheet_link_tag, asset_path</code></td>
-                    <td>JavaScript含める, スタイルシートリンク, アセットパス</td>
-                    <td>JavaScriptやCSSファイルを読み込むタグを生成します。</td>
+                    <td>JavaScriptやCSSファイルを読み込むタグを生成。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActionView::SanitizeHelper</code><br>(サニタイズ)</td>
                     <td><code>sanitize, strip_tags, strip_links</code></td>
-                    <td>消毒する, タグ除去, リンク除去</td>
-                    <td>XSS攻撃を防ぐため、危険なHTMLタグやJavaScriptを除去します。</td>
+                    <td>XSS攻撃を防ぐため、危険なHTMLタグやJavaScriptを除去。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActionView::TextHelper</code><br>(テキスト加工)</td>
                     <td><code>truncate, excerpt, highlight, simple_format, pluralize</code></td>
-                    <td>切り詰め, 抜粋, ハイライト, 簡易フォーマット, 複数形化</td>
-                    <td>テキストの表示を整形・加工するヘルパーメソッド群です。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionView::NumberHelper</code><br>(数値フォーマット)</td>
-                    <td><code>number_with_delimiter, number_to_percentage, number_to_human</code></td>
-                    <td>区切り文字付き数値, パーセント表示, 人間的表記</td>
-                    <td>数値を見やすい形式に変換します（例：1,000,000や50%）。</td>
+                    <td>テキストの表示を整形・加工するヘルパーメソッド群。</td>
                 </tr>
                 
-                <!-- ActiveStorage 詳細 -->
                 <tr>
-                    <td rowspan="4" class="family-head"><strong>ActiveStorage</strong><br>(ファイル管理詳細)</td>
-                    <td><code>ActiveStorage::Service</code><br>(ストレージサービス)</td>
-                    <td><code>upload, download, delete, exist?, url</code></td>
-                    <td>アップロード, ダウンロード, 削除, 存在？, URL</td>
-                    <td>Amazon S3やGoogle Cloud Storageなど、外部ストレージとの連携を抽象化します。</td>
-                </tr>
-                <tr>
-                    <td><code>ActiveStorage::Analyzer</code><br>(ファイル分析)</td>
-                    <td><code>metadata, analyze</code></td>
-                    <td>メタデータ, 分析</td>
-                    <td>画像の幅・高さ、動画の長さなど、ファイルの詳細情報を自動取得します。</td>
-                </tr>
-                <tr>
-                    <td><code>ActiveStorage::Previewer</code><br>(プレビュー生成)</td>
-                    <td><code>preview, representable?</code></td>
-                    <td>プレビュー, 表現可能？</td>
-                    <td>PDFや動画のサムネイル画像を自動生成します。</td>
-                </tr>
-                <tr>
-                    <td><code>ActiveStorage::VariantWithRecord</code><br>(画像変換)</td>
-                    <td><code>resize, rotate, convert</code></td>
-                    <td>サイズ変更, 回転, 変換</td>
-                    <td>画像のサイズ変更や形式変換を行い、処理済み画像をキャッシュします。</td>
+                    <td><code>ActionView::DateHelper</code><br>(日付ヘルパー)</td>
+                    <td><code>distance_of_time_in_words, time_ago_in_words</code></td>
+                    <td>「3日前」「約1時間前」のような人間的な時間表現。</td>
                 </tr>
                 
-                <!-- ActionCable 詳細 -->
-                <tr>
-                    <td rowspan="3" class="family-head"><strong>ActionCable</strong><br>(WebSocket詳細)</td>
-                    <td><code>ActionCable::Server</code><br>(サーバー)</td>
-                    <td><code>broadcast, connections, disconnect</code></td>
-                    <td>配信, 接続群, 切断</td>
-                    <td>WebSocketサーバー全体の管理と、全クライアントへの一斉配信を行います。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionCable::RemoteConnections</code><br>(リモート接続)</td>
-                    <td><code>where, disconnect</code></td>
-                    <td>条件指定, 切断</td>
-                    <td>特定の条件に合うユーザーの接続を、サーバー側から強制切断します。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionCable::TestHelper</code><br>(テストヘルパー)</td>
-                    <td><code>assert_broadcast_on, assert_broadcasts</code></td>
-                    <td>配信確認, 配信数確認</td>
-                    <td>WebSocket通信のテストを簡単に書けるようにするヘルパーです。</td>
+                <!-- ActionMailer セクション -->
+                <tr class="category-header">
+                    <td colspan="4">📧 ActionMailer - メール送信の全機能</td>
                 </tr>
                 
-                <!-- ActiveJob 詳細 -->
                 <tr>
-                    <td rowspan="4" class="family-head"><strong>ActiveJob</strong><br>(非同期処理詳細)</td>
-                    <td><code>ActiveJob::QueueAdapters</code><br>(キューアダプター)</td>
-                    <td><code>Sidekiq, Resque, DelayedJob, Async</code></td>
-                    <td>各種バックエンドシステム</td>
-                    <td>様々なバックグラウンドジョブ処理システムを統一的に扱えるようにします。</td>
+                    <td rowspan="5" class="family-head"><strong>ActionMailer</strong><br>(手紙担当)</td>
+                    <td><code>ActionMailer::Base</code><br>(メーラーの親)</td>
+                    <td><code>mail, deliver_now, deliver_later</code></td>
+                    <td>メールを作成・送信する基本機能。コントローラーと似た構造。</td>
                 </tr>
+                
                 <tr>
-                    <td><code>ActiveJob::Callbacks</code><br>(ジョブコールバック)</td>
+                    <td><code>mail</code><br>(メール作成)</td>
+                    <td><code>to:, from:, subject:, cc:, bcc:</code></td>
+                    <td>メールの宛先、件名、送信元などを設定。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>attachments</code><br>(添付ファイル)</td>
+                    <td><code>attachments['filename.jpg'] = File.read(...)</code></td>
+                    <td>メールにファイルを添付する機能。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionMailer::Preview</code><br>(プレビュー)</td>
+                    <td><code>preview</code></td>
+                    <td>開発環境でメールの見た目を確認する機能。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionMailer::DeliveryMethods</code><br>(配信方法)</td>
+                    <td><code>smtp, sendmail, test, file</code></td>
+                    <td>メールの送信方法を設定（SMTP、テスト用など）。</td>
+                </tr>
+                
+                <!-- ActiveJob セクション -->
+                <tr class="category-header">
+                    <td colspan="4">⚙️ ActiveJob - 非同期処理の全機能</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="5" class="family-head"><strong>ActiveJob</strong><br>(重い仕事担当)</td>
+                    <td><code>ActiveJob::Base</code><br>(ジョブの親)</td>
+                    <td><code>perform_later, perform_now, set</code></td>
+                    <td>時間のかかる処理をバックグラウンドで実行。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>queue_as</code><br>(キュー管理)</td>
+                    <td><code>queue_as :urgent, queue_as :default</code></td>
+                    <td>ジョブの優先度に応じて待機列を指定。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActiveJob::Callbacks</code><br>(コールバック)</td>
                     <td><code>before_enqueue, after_enqueue, before_perform, after_perform</code></td>
-                    <td>キュー登録前, キュー登録後, 実行前, 実行後</td>
-                    <td>ジョブの各段階で自動実行される処理を定義します。</td>
+                    <td>ジョブの各段階で自動実行される処理。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActiveJob::Exceptions</code><br>(例外処理)</td>
                     <td><code>retry_on, discard_on, retry_job</code></td>
-                    <td>〜で再試行, 〜で破棄, ジョブ再試行</td>
-                    <td>ジョブ失敗時の再試行ロジックやエラーハンドリングを設定します。</td>
-                </tr>
-                <tr>
-                    <td><code>ActiveJob::Arguments</code><br>(引数処理)</td>
-                    <td><code>serialize, deserialize</code></td>
-                    <td>直列化, 復元</td>
-                    <td>ジョブに渡すオブジェクトを安全に保存・復元する仕組みです。</td>
+                    <td>ジョブ失敗時の再試行ロジックやエラーハンドリング。</td>
                 </tr>
                 
-                <!-- ActiveSupport 詳細 -->
                 <tr>
-                    <td rowspan="8" class="family-head"><strong>ActiveSupport</strong><br>(ユーティリティ詳細)</td>
+                    <td><code>ActiveJob::QueueAdapters</code><br>(アダプター)</td>
+                    <td><code>Sidekiq, Resque, DelayedJob, Async</code></td>
+                    <td>様々なバックグラウンドジョブ処理システムとの連携。</td>
+                </tr>
+                
+                <!-- ActiveSupport セクション -->
+                <tr class="category-header">
+                    <td colspan="4">🔧 ActiveSupport - 便利機能の全集合</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="10" class="family-head"><strong>ActiveSupport</strong><br>(便利道具担当)</td>
+                    <td><code>ActiveSupport::Concern</code><br>(機能追加モジュール)</td>
+                    <td><code>included, class_methods, prepended</code></td>
+                    <td>複数のクラスで共通して使いたい機能をモジュール化。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>Object</code>への拡張機能</td>
+                    <td><code>blank?, present?, try, try!, in?</code></td>
+                    <td>Rubyの基本機能を拡張。nilや空文字列の判定など。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>Date, Time</code>への拡張機能</td>
+                    <td><code>ago, since, beginning_of_day, end_of_month, yesterday, tomorrow</code></td>
+                    <td>3.days.ago（3日前）のような直感的な日時操作。</td>
+                </tr>
+                
+                <tr>
                     <td><code>ActiveSupport::Inflector</code><br>(語形変化)</td>
                     <td><code>pluralize, singularize, camelize, underscore, humanize</code></td>
-                    <td>複数形化, 単数形化, キャメルケース化, アンダースコア化, 人間向け表記</td>
-                    <td>文字列の形式を自動変換します（例：user → Users, UserComment → user_comment）。</td>
+                    <td>文字列の形式を自動変換（user → Users、user_comment → UserComment）。</td>
                 </tr>
-                <tr>
-                    <td><code>ActiveSupport::MessageEncryptor</code><br>(暗号化)</td>
-                    <td><code>encrypt_and_sign, decrypt_and_verify</code></td>
-                    <td>暗号化と署名, 復号と検証</td>
-                    <td>データを安全に暗号化・復号化し、改ざんを検出します。</td>
-                </tr>
+                
                 <tr>
                     <td><code>ActiveSupport::Cache</code><br>(キャッシュストア)</td>
-                    <td><code>fetch, read, write, delete, clear, increment, decrement</code></td>
-                    <td>取得, 読み込み, 書き込み, 削除, クリア, 増加, 減少</td>
-                    <td>メモリやRedisなど、様々なキャッシュストアを統一的に扱います。</td>
+                    <td><code>fetch, read, write, delete, clear, increment</code></td>
+                    <td>メモリやRedisなど、様々なキャッシュストアを統一的に扱う。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActiveSupport::Notifications</code><br>(イベント通知)</td>
                     <td><code>instrument, subscribe, unsubscribe</code></td>
-                    <td>計測, 購読, 購読解除</td>
-                    <td>アプリケーション内のイベントを監視・計測する仕組みです。</td>
+                    <td>アプリケーション内のイベントを監視・計測。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActiveSupport::Duration</code><br>(期間)</td>
                     <td><code>seconds, minutes, hours, days, weeks, months, years</code></td>
-                    <td>秒, 分, 時間, 日, 週, 月, 年</td>
-                    <td>時間の計算を直感的に行えるようにします（例：3.days.ago）。</td>
+                    <td>時間の計算を直感的に行える（例：3.days + 2.hours）。</td>
                 </tr>
+                
                 <tr>
                     <td><code>ActiveSupport::TimeZone</code><br>(タイムゾーン)</td>
                     <td><code>now, parse, at, local, utc</code></td>
-                    <td>現在, 解析, 〜で, ローカル, 協定世界時</td>
-                    <td>タイムゾーンを考慮した日時処理を行います。</td>
+                    <td>タイムゾーンを考慮した日時処理。</td>
                 </tr>
+                
+                <tr>
+                    <td><code>ActiveSupport::MessageEncryptor</code><br>(暗号化)</td>
+                    <td><code>encrypt_and_sign, decrypt_and_verify</code></td>
+                    <td>データを安全に暗号化・復号化し、改ざんを検出。</td>
+                </tr>
+                
                 <tr>
                     <td><code>ActiveSupport::HashWithIndifferentAccess</code><br>(柔軟なハッシュ)</td>
                     <td><code>[], fetch, merge, except, slice</code></td>
-                    <td>取得, フェッチ, 結合, 除外, 切り出し</td>
-                    <td>シンボルと文字列のキーを区別しないハッシュです。</td>
-                </tr>
-                <tr>
-                    <td><code>ActiveSupport::Configurable</code><br>(設定可能)</td>
-                    <td><code>config, configure</code></td>
-                    <td>設定, 設定する</td>
-                    <td>クラスに設定機能を追加するモジュールです。</td>
+                    <td>シンボルと文字列のキーを区別しないハッシュ。</td>
                 </tr>
                 
-                <!-- Rails Configuration -->
-                <tr>
-                    <td rowspan="6" class="family-head"><strong>Rails Configuration</strong><br>(Rails設定)</td>
-                    <td rowspan="3"><code>Rails.application.config</code><br>(アプリ設定)</td>
-                    <td><code>cache_classes, eager_load, consider_all_requests_local</code></td>
-                    <td>クラスキャッシュ, 即座読み込み, 全リクエストをローカル扱い</td>
-                    <td>【環境設定】開発・本番環境での動作を制御します。</td>
+                <!-- ActiveStorage セクション -->
+                <tr class="category-header">
+                    <td colspan="4">📁 ActiveStorage - ファイル管理の全機能</td>
                 </tr>
+                
                 <tr>
-                    <td><code>force_ssl, assets.compile, active_record.dump_schema_after_migration</code></td>
-                    <td>SSL強制, アセットコンパイル, マイグレーション後スキーマダンプ</td>
-                    <td>【セキュリティ・アセット設定】HTTPS強制やアセットパイプラインの設定を行います。</td>
+                    <td rowspan="5" class="family-head"><strong>ActiveStorage</strong><br>(ファイル管理)</td>
+                    <td><code>ActiveStorage::Attached</code><br>(添付ファイル)</td>
+                    <td><code>attach, attached?, purge, purge_later</code></td>
+                    <td>モデルにファイルを添付・削除する基本機能。</td>
                 </tr>
+                
                 <tr>
-                    <td><code>time_zone, i18n.default_locale, encoding</code></td>
-                    <td>タイムゾーン, デフォルトロケール, エンコーディング</td>
-                    <td>【国際化設定】アプリケーションの地域・言語設定を管理します。</td>
+                    <td><code>ActiveStorage::Service</code><br>(ストレージサービス)</td>
+                    <td><code>upload, download, delete, exist?, url</code></td>
+                    <td>Amazon S3やGoogle Cloud Storageとの連携。</td>
                 </tr>
+                
+                <tr>
+                    <td><code>ActiveStorage::Analyzer</code><br>(ファイル分析)</td>
+                    <td><code>metadata, analyze</code></td>
+                    <td>画像の幅・高さ、動画の長さなど、ファイルの詳細情報を取得。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActiveStorage::Previewer</code><br>(プレビュー生成)</td>
+                    <td><code>preview, representable?</code></td>
+                    <td>PDFや動画のサムネイル画像を自動生成。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActiveStorage::VariantWithRecord</code><br>(画像変換)</td>
+                    <td><code>resize, rotate, convert</code></td>
+                    <td>画像のサイズ変更や形式変換、処理済み画像のキャッシュ。</td>
+                </tr>
+                
+                <!-- ActionCable セクション -->
+                <tr class="category-header">
+                    <td colspan="4">📡 ActionCable - WebSocket通信の全機能</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="5" class="family-head"><strong>ActionCable</strong><br>(WebSocket)</td>
+                    <td><code>ActionCable::Connection</code><br>(接続)</td>
+                    <td><code>connect, disconnect, identified_by</code></td>
+                    <td>WebSocket接続の確立と管理。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionCable::Channel</code><br>(チャンネル)</td>
+                    <td><code>subscribe, unsubscribe, perform</code></td>
+                    <td>特定のチャンネルへの購読と通信。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionCable::Server</code><br>(サーバー)</td>
+                    <td><code>broadcast, connections, disconnect</code></td>
+                    <td>WebSocketサーバー全体の管理と一斉配信。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionCable::RemoteConnections</code><br>(リモート接続)</td>
+                    <td><code>where, disconnect</code></td>
+                    <td>特定条件のユーザー接続を強制切断。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionCable::TestHelper</code><br>(テストヘルパー)</td>
+                    <td><code>assert_broadcast_on, assert_broadcasts</code></td>
+                    <td>WebSocket通信のテストを簡単に書くためのヘルパー。</td>
+                </tr>
+                
+                <!-- Rails全体 セクション -->
+                <tr class="category-header">
+                    <td colspan="4">🏠 Rails - アプリケーション全体の管理</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="8" class="family-head"><strong>Rails</strong><br>(家全体)</td>
+                    <td><code>Rails</code><br>(アプリケーション全体)</td>
+                    <td><code>env, logger, root, cache, version</code></td>
+                    <td>アプリケーション全体に関わる情報へのアクセス。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>Rails.application.config</code><br>(設定)</td>
+                    <td><code>time_zone, i18n.default_locale, eager_load, cache_classes</code></td>
+                    <td>アプリケーションの各種設定。</td>
+                </tr>
+                
                 <tr>
                     <td><code>Rails::Initializer</code><br>(初期化処理)</td>
                     <td><code>before_configuration, before_initialize, after_initialize</code></td>
-                    <td>設定前, 初期化前, 初期化後</td>
-                    <td>Railsアプリケーション起動時の各段階で実行される処理を定義します。</td>
+                    <td>アプリケーション起動時の各段階で実行される処理。</td>
                 </tr>
+                
                 <tr>
                     <td><code>Rails::Engine</code><br>(エンジン)</td>
                     <td><code>isolate_namespace, routes, config</code></td>
-                    <td>名前空間分離, ルート, 設定</td>
-                    <td>再利用可能なRailsアプリケーションの部品（gem）を作る仕組みです。</td>
+                    <td>再利用可能なRailsアプリケーションの部品（gem）を作る仕組み。</td>
                 </tr>
+                
                 <tr>
                     <td><code>Rails::Railtie</code><br>(レールタイ)</td>
                     <td><code>initializer, config, rake_tasks</code></td>
-                    <td>初期化子, 設定, Rakeタスク</td>
-                    <td>Railsの各コンポーネントを起動時に統合する基本クラスです。</td>
-                </tr>
-                
-                <!-- Testing Framework -->
-                <tr>
-                    <td rowspan="6" class="family-head"><strong>Testing Framework</strong><br>(テスト機能)</td>
-                    <td rowspan="2"><code>ActiveSupport::TestCase</code><br>(テストケース)</td>
-                    <td><code>assert, assert_equal, assert_not, assert_raises</code></td>
-                    <td>断言, 等しいと断言, 〜でないと断言, 例外発生を断言</td>
-                    <td>【アサーション系】テスト結果が期待通りかチェックします。</td>
-                </tr>
-                <tr>
-                    <td><code>setup, teardown, test</code></td>
-                    <td>セットアップ, 後片付け, テスト</td>
-                    <td>【テスト構造】各テストの前後処理とテスト定義を行います。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionDispatch::IntegrationTest</code><br>(統合テスト)</td>
-                    <td><code>get, post, put, patch, delete, follow_redirect!</code></td>
-                    <td>GET送信, POST送信, PUT送信, PATCH送信, DELETE送信, リダイレクト追跡</td>
-                    <td>HTTPリクエストをシミュレートして、アプリケーション全体の動作をテストします。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionController::TestCase</code><br>(コントローラーテスト)</td>
-                    <td><code>@controller, @request, @response, assigns</code></td>
-                    <td>コントローラー, リクエスト, レスポンス, 代入値</td>
-                    <td>コントローラーの動作を単体でテストするための変数群です。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionMailer::TestHelper</code><br>(メーラーテスト)</td>
-                    <td><code>assert_emails, assert_no_emails, assert_enqueued_emails</code></td>
-                    <td>メール送信を断言, メール未送信を断言, キュー登録を断言</td>
-                    <td>メール送信が正しく行われたかテストします。</td>
-                </tr>
-                <tr>
-                    <td><code>ActiveJob::TestHelper</code><br>(ジョブテスト)</td>
-                    <td><code>assert_enqueued_jobs, assert_performed_jobs, perform_enqueued_jobs</code></td>
-                    <td>ジョブキュー登録を断言, ジョブ実行を断言, キュー内ジョブを実行</td>
-                    <td>バックグラウンドジョブの動作をテストします。</td>
-                </tr>
-                
-                <!-- Rack Middleware -->
-                <tr>
-                    <td rowspan="5" class="family-head"><strong>Rack Middleware</strong><br>(ミドルウェア層)</td>
-                    <td><code>Rack::Sendfile</code><br>(ファイル送信)</td>
-                    <td><code>X-Sendfile, X-Accel-Redirect</code></td>
-                    <td>Webサーバー直接配信ヘッダー</td>
-                    <td>大きなファイルをWebサーバーから直接配信して、Railsの負荷を軽減します。</td>
-                </tr>
-                <tr>
-                    <td><code>Rack::Cache</code><br>(HTTPキャッシュ)</td>
-                    <td><code>Cache-Control, ETag, Last-Modified</code></td>
-                    <td>キャッシュ制御, エンティティタグ, 最終更新日時</td>
-                    <td>HTTPレベルでのキャッシュを実装し、パフォーマンスを向上させます。</td>
-                </tr>
-                <tr>
-                    <td><code>Rack::Lock</code><br>(スレッドロック)</td>
-                    <td><code>Mutex</code></td>
-                    <td>相互排他</td>
-                    <td>マルチスレッド環境でリクエストを順番に処理します。</td>
-                </tr>
-                <tr>
-                    <td><code>Rack::Runtime</code><br>(実行時間)</td>
-                    <td><code>X-Runtime</code></td>
-                    <td>実行時間ヘッダー</td>
-                    <td>リクエスト処理時間を計測してレスポンスヘッダーに追加します。</td>
-                </tr>
-                <tr>
-                    <td><code>Rack::MethodOverride</code><br>(メソッド上書き)</td>
-                    <td><code>_method</code></td>
-                    <td>メソッドパラメータ</td>
-                    <td>HTMLフォームでPUT/DELETEメソッドを擬似的に実現します。</td>
-                </tr>
-                
-                <!-- ActionMailbox/ActionText 詳細 -->
-                <tr>
-                    <td rowspan="3" class="family-head"><strong>ActionMailbox</strong><br>(受信メール詳細)</td>
-                    <td><code>ActionMailbox::Router</code><br>(メールルーター)</td>
-                    <td><code>route, routing</code></td>
-                    <td>ルート, ルーティング</td>
-                    <td>受信メールアドレスに基づいて処理を振り分けます。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionMailbox::Callbacks</code><br>(メールコールバック)</td>
-                    <td><code>before_processing, after_processing, around_processing</code></td>
-                    <td>処理前, 処理後, 処理前後</td>
-                    <td>メール処理の各段階でフックを実行します。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionMailbox::IncinerationJob</code><br>(メール削除ジョブ)</td>
-                    <td><code>incinerate, incinerate_later</code></td>
-                    <td>焼却, 後で焼却</td>
-                    <td>処理済みメールを一定期間後に自動削除します。</td>
+                    <td>Railsの各コンポーネントを起動時に統合する基本クラス。</td>
                 </tr>
                 
                 <tr>
-                    <td rowspan="3" class="family-head"><strong>ActionText</strong><br>(リッチテキスト詳細)</td>
-                    <td><code>ActionText::Attachable</code><br>(添付可能)</td>
-                    <td><code>to_rich_text_attributes, to_trix_content_attachment_partial_path</code></td>
-                    <td>リッチテキスト属性へ, Trix添付パーシャルパスへ</td>
-                    <td>任意のモデルをリッチテキストに埋め込み可能にします。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionText::Serialization</code><br>(シリアル化)</td>
-                    <td><code>to_html, to_plain_text, to_trix_html</code></td>
-                    <td>HTMLへ, プレーンテキストへ, Trix HTMLへ</td>
-                    <td>リッチテキストを様々な形式に変換します。</td>
-                </tr>
-                <tr>
-                    <td><code>ActionText::Rendering</code><br>(レンダリング)</td>
-                    <td><code>render_action_text_content, render_action_text_attachments</code></td>
-                    <td>コンテンツ描画, 添付ファイル描画</td>
-                    <td>リッチテキストとその添付ファイルを表示用HTMLに変換します。</td>
+                    <td><code>Rails::Generators</code><br>(コード生成)</td>
+                    <td><code>rails generate model, controller, migration</code></td>
+                    <td>コードの雛形を自動生成するコマンド群。</td>
                 </tr>
                 
-                <!-- Generators -->
                 <tr>
-                    <td rowspan="4" class="family-head"><strong>Rails Generators</strong><br>(コード生成)</td>
-                    <td><code>Rails::Generators::Base</code><br>(ジェネレーター基底)</td>
-                    <td><code>create_file, copy_file, template, inject_into_file</code></td>
-                    <td>ファイル作成, ファイルコピー, テンプレート, ファイルに挿入</td>
-                    <td>railsコマンドでコードを自動生成する仕組みの基本機能です。</td>
-                </tr>
-                <tr>
-                    <td><code>Rails::Generators::Migration</code><br>(マイグレーション生成)</td>
-                    <td><code>migration_template, next_migration_number</code></td>
-                    <td>マイグレーションテンプレート, 次のマイグレーション番号</td>
-                    <td>データベースマイグレーションファイルを生成します。</td>
-                </tr>
-                <tr>
-                    <td><code>Rails::Generators::NamedBase</code><br>(名前付き生成)</td>
-                    <td><code>class_name, file_name, table_name</code></td>
-                    <td>クラス名, ファイル名, テーブル名</td>
-                    <td>モデル名などから各種命名規則に従った名前を生成します。</td>
-                </tr>
-                <tr>
-                    <td><code>Rails::Generators::AppGenerator</code><br>(アプリ生成)</td>
-                    <td><code>rails new</code></td>
-                    <td>新規Railsアプリケーション</td>
-                    <td>新しいRailsアプリケーションの雛形を生成します。</td>
-                </tr>
-                
-                <!-- Security -->
-                <tr>
-                    <td rowspan="4" class="family-head"><strong>Security Features</strong><br>(セキュリティ機能)</td>
                     <td><code>Rails::ContentSecurityPolicy</code><br>(CSP)</td>
                     <td><code>default_src, script_src, style_src, img_src</code></td>
-                    <td>デフォルトソース, スクリプトソース, スタイルソース, 画像ソース</td>
-                    <td>XSS攻撃を防ぐため、読み込み可能なリソースの送信元を制限します。</td>
+                    <td>XSS攻撃を防ぐため、読み込み可能なリソースの送信元を制限。</td>
                 </tr>
+                
                 <tr>
                     <td><code>Rails::PermissionsPolicy</code><br>(権限ポリシー)</td>
                     <td><code>camera, microphone, geolocation</code></td>
-                    <td>カメラ, マイク, 位置情報</td>
-                    <td>ブラウザAPIの使用権限を制御します。</td>
+                    <td>ブラウザAPIの使用権限を制御。</td>
                 </tr>
+                
+                <!-- ActionText/ActionMailbox セクション -->
+                <tr class="category-header">
+                    <td colspan="4">✉️ ActionText & ActionMailbox - リッチテキストとメール受信</td>
+                </tr>
+                
                 <tr>
-                    <td><code>ActionDispatch::SSL</code><br>(SSL強制)</td>
-                    <td><code>force_ssl, hsts</code></td>
-                    <td>SSL強制, HSTS</td>
-                    <td>HTTPS接続を強制し、セキュアな通信を保証します。</td>
+                    <td rowspan="3" class="family-head"><strong>ActionText</strong><br>(リッチテキスト)</td>
+                    <td><code>ActionText::RichText</code><br>(リッチテキスト)</td>
+                    <td><code>has_rich_text, body</code></td>
+                    <td>WYSIWYGエディタでリッチテキストを編集・保存。</td>
                 </tr>
+                
                 <tr>
-                    <td><code>ActionController::RequestForgeryProtection</code><br>(CSRF対策)</td>
-                    <td><code>form_authenticity_token, verify_authenticity_token</code></td>
-                    <td>フォーム認証トークン, 認証トークン検証</td>
-                    <td>クロスサイトリクエストフォージェリ攻撃を防ぎます。</td>
+                    <td><code>ActionText::Attachable</code><br>(添付可能)</td>
+                    <td><code>to_rich_text_attributes</code></td>
+                    <td>任意のモデルをリッチテキストに埋め込み可能にする。</td>
                 </tr>
+                
+                <tr>
+                    <td><code>ActionText::Rendering</code><br>(レンダリング)</td>
+                    <td><code>render_action_text_content</code></td>
+                    <td>リッチテキストを表示用HTMLに変換。</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="3" class="family-head"><strong>ActionMailbox</strong><br>(受信メール)</td>
+                    <td><code>ActionMailbox::Base</code><br>(メール受信)</td>
+                    <td><code>process, bounce_with</code></td>
+                    <td>受信メールを処理するための基本機能。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionMailbox::Router</code><br>(メールルーター)</td>
+                    <td><code>route, routing</code></td>
+                    <td>受信メールアドレスに基づいて処理を振り分け。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionMailbox::IncinerationJob</code><br>(メール削除)</td>
+                    <td><code>incinerate, incinerate_later</code></td>
+                    <td>処理済みメールを一定期間後に自動削除。</td>
+                </tr>
+                
+                <!-- Testing Framework セクション -->
+                <tr class="category-header">
+                    <td colspan="4">🧪 Testing Framework - テスト機能の全集合</td>
+                </tr>
+                
+                <tr>
+                    <td rowspan="6" class="family-head"><strong>Testing</strong><br>(テスト機能)</td>
+                    <td><code>ActiveSupport::TestCase</code><br>(テストケース)</td>
+                    <td><code>assert, assert_equal, assert_not, assert_raises, setup, teardown</code></td>
+                    <td>テストの基本的なアサーションと前後処理。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionDispatch::IntegrationTest</code><br>(統合テスト)</td>
+                    <td><code>get, post, put, patch, delete, follow_redirect!</code></td>
+                    <td>HTTPリクエストをシミュレートして全体の動作をテスト。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionController::TestCase</code><br>(コントローラーテスト)</td>
+                    <td><code>@controller, @request, @response, assigns</code></td>
+                    <td>コントローラーの動作を単体でテスト。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionMailer::TestHelper</code><br>(メーラーテスト)</td>
+                    <td><code>assert_emails, assert_no_emails, assert_enqueued_emails</code></td>
+                    <td>メール送信が正しく行われたかテスト。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActiveJob::TestHelper</code><br>(ジョブテスト)</td>
+                    <td><code>assert_enqueued_jobs, assert_performed_jobs, perform_enqueued_jobs</code></td>
+                    <td>バックグラウンドジョブの動作をテスト。</td>
+                </tr>
+                
+                <tr>
+                    <td><code>ActionCable::TestHelper</code><br>(WebSocketテスト)</td>
+                    <td><code>assert_broadcast_on, assert_broadcasts</code></td>
+                    <td>WebSocket通信のテスト。</td>
+                </tr>
+                
             </tbody>
         </table>
         </div>
