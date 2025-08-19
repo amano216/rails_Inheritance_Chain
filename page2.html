@@ -13,6 +13,73 @@
             margin: 0;
             padding: 20px;
         }
+        /* 検索バー */
+        .search-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-input {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        .clear-button {
+            padding: 8px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .clear-button:hover {
+            background: #dc2626;
+        }
+        .search-status {
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        /* 検索ハイライト */
+        .search-highlight {
+            background-color: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+            box-shadow: 0 0 0 2px #fbbf24;
+        }
+        .current-highlight {
+            background-color: #fbbf24;
+            box-shadow: 0 0 0 3px #f59e0b;
+        }
+        /* モバイル対応 */
+        @media (max-width: 768px) {
+            .search-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                width: auto;
+            }
+            .search-input {
+                width: 100%;
+            }
+        }
         h1, h2 {
             text-align: center;
             color: #2c3e50;
@@ -132,6 +199,14 @@
 </head>
 <body>
 
+    <!-- 検索バー -->
+    <div class="search-container">
+        <span style="color: #666;">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="ページ内を検索...">
+        <button id="clearSearch" class="clear-button">✕</button>
+        <span id="searchStatus" class="search-status"></span>
+    </div>
+
     <div class="container">
         <h1>Railsファミリー【完全版】- ページ2 (詳細機能編)</h1>
         <p>Railsの全ての主要な親子関係と高度な機能を網羅的に解説します。</p>
@@ -234,7 +309,7 @@
                 
                 <!-- ActionController 詳細機能 -->
                 <tr>
-                    <td rowspan="10" class="family-head"><strong>ActionController</strong><br>(コントローラー詳細)</td>
+                    <td rowspan="11" class="family-head"><strong>ActionController</strong><br>(コントローラー詳細)</td>
                     <td rowspan="2"><code>ActionController::Streaming</code><br>(ストリーミング)</td>
                     <td><code>send_file, send_data</code></td>
                     <td>ファイル送信, データ送信</td>
@@ -677,6 +752,9 @@
             <a href="index.html">← ページ1へ戻る</a>
         </div>
     </div>
+
+    <!-- 検索機能のスクリプト -->
+    <script src="search.js"></script>
 
 </body>
 </html>

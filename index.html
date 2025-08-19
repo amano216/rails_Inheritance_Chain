@@ -14,6 +14,86 @@
             font-family: 'Inter', 'Noto Sans JP', sans-serif;
             line-height: 1.7;
         }
+        /* 検索バー */
+        .search-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-input {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        .search-button {
+            padding: 8px 12px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .search-button:hover {
+            background: #2563eb;
+        }
+        .clear-button {
+            padding: 8px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .clear-button:hover {
+            background: #dc2626;
+        }
+        .search-status {
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        /* 検索ハイライト */
+        .search-highlight {
+            background-color: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+            box-shadow: 0 0 0 2px #fbbf24;
+        }
+        .current-highlight {
+            background-color: #fbbf24;
+            box-shadow: 0 0 0 3px #f59e0b;
+        }
+        /* モバイル対応 */
+        @media (max-width: 768px) {
+            .search-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                width: auto;
+            }
+            .search-input {
+                width: 100%;
+            }
+        }
         .inheritance-arrow {
             border-left: 3px solid #4f46e5;
             border-bottom: 3px solid #4f46e5;
@@ -90,6 +170,16 @@
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
+
+    <!-- 検索バー -->
+    <div class="search-container">
+        <i class="fas fa-search text-gray-600"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="ページ内を検索...">
+        <button id="clearSearch" class="clear-button">
+            <i class="fas fa-times"></i>
+        </button>
+        <span id="searchStatus" class="search-status"></span>
+    </div>
 
     <!-- Header -->
     <header class="bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-white">
@@ -1215,6 +1305,9 @@ Post.first.formatted_created_at
             </p>
         </div>
     </footer>
+
+    <!-- 検索機能のスクリプト -->
+    <script src="search.js"></script>
 
 </body>
 </html>
