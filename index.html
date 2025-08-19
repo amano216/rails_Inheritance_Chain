@@ -6,6 +6,7 @@
     <title>Rails 継承チェーン完全マスターガイド</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="global-search.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -171,14 +172,20 @@
 </head>
 <body class="bg-gray-50 text-gray-900">
 
-    <!-- 検索バー -->
-    <div class="search-container">
-        <i class="fas fa-search text-gray-600"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="ページ内を検索...">
-        <button id="clearSearch" class="clear-button">
-            <i class="fas fa-times"></i>
-        </button>
-        <span id="searchStatus" class="search-status"></span>
+    <!-- グローバル検索 -->
+    <button class="open-global-search" onclick="document.getElementById('globalSearchInput').focus()">
+        <i class="fas fa-search"></i>
+        全ページ検索
+    </button>
+    
+    <div class="global-search-container">
+        <div class="global-search-header">
+            <input type="text" id="globalSearchInput" class="global-search-input" placeholder="全ページから検索...">
+            <button id="clearGlobalSearch" class="clear-global-search">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="globalSearchResults"></div>
     </div>
 
     <!-- Header -->
@@ -1310,7 +1317,7 @@ Post.first.formatted_created_at
     </footer>
 
     <!-- 検索機能のスクリプト -->
-    <script src="search.js"></script>
+    <script src="global-search.js"></script>
 
 </body>
 </html>

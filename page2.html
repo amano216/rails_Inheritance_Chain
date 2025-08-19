@@ -181,15 +181,26 @@
             }
         }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="global-search.css">
 </head>
 <body>
 
-    <!-- 検索バー -->
-    <div class="search-container">
-        <span style="color: #666;">🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="ページ内を検索...">
-        <button id="clearSearch" class="clear-button">✕</button>
-        <span id="searchStatus" class="search-status"></span>
+    <!-- グローバル検索 -->
+    <button class="open-global-search" onclick="document.getElementById('globalSearchInput').focus()">
+        <i class="fas fa-search"></i>
+        全ページ検索
+    </button>
+    
+    <div class="global-search-container">
+        <div class="global-search-header">
+            <input type="text" id="globalSearchInput" class="global-search-input" placeholder="全ページから検索...">
+            <button id="clearGlobalSearch" class="clear-global-search">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="globalSearchResults"></div>
     </div>
 
     <div class="container">
@@ -840,7 +851,7 @@
     </div>
 
     <!-- 検索機能のスクリプト -->
-    <script src="search.js"></script>
+    <script src="global-search.js"></script>
 
 </body>
 </html>
