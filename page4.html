@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rails クラス継承とディレクトリ構造 - ページ4</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="global-search.css">
+    <link rel="stylesheet" href="hamburger-menu.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .directory-tree {
+            font-family: 'Courier New', monospace;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        .tree-item {
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+        }
+        .tree-folder {
+            color: #fbbf24;
+        }
+        .tree-file {
+            color: #60a5fa;
+        }
+        .tree-gem {
+            color: #f87171;
+        }
+        .inheritance-diagram {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .class-box {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .class-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        .class-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #1e293b;
+        }
+        .class-path {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        .arrow {
+            text-align: center;
+            color: #667eea;
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        tr:hover {
+            background: #f8fafc;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .badge-model { background: #dbeafe; color: #1e40af; }
+        .badge-controller { background: #fef3c7; color: #92400e; }
+        .badge-view { background: #dcfce7; color: #166534; }
+        .badge-job { background: #fce7f3; color: #9f1239; }
+        .badge-mailer { background: #e0e7ff; color: #3730a3; }
+        .badge-channel { background: #ffedd5; color: #9a3412; }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        .highlight-comment { color: #94a3b8; }
+        .highlight-class { color: #fbbf24; }
+        .highlight-method { color: #60a5fa; }
+        .highlight-string { color: #86efac; }
+    </style>
+</head>
+<body>
+    <!-- グローバル検索 -->
+    <button class="open-global-search" onclick="document.getElementById('globalSearchInput').focus()">
+        <i class="fas fa-search"></i>
+        全ページ検索
+    </button>
+    
+    <div class="global-search-container">
+        <div class="global-search-header">
+            <input type="text" id="globalSearchInput" class="global-search-input" placeholder="全ページから検索...">
+            <button id="clearGlobalSearch" class="clear-global-search">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="globalSearchResults"></div>
+    </div>
+
+    <div class="container main-content-wrapper">
+        <!-- ヘッダー -->
+        <div class="card">
+            <h1 style="font-size: 2.5em; font-weight: bold; color: #1e293b; margin-bottom: 10px;">
+                <i class="fas fa-folder-tree" style="color: #667eea;"></i>
+                Rails クラス継承とディレクトリ構造
+            </h1>
+            <p style="color: #64748b; font-size: 1.1em;">
+                Railsアプリケーションのディレクトリ構造と、各クラスがどのファイルに定義されているかを完全理解
+            </p>
+        </div>
+
+        <!-- Railsディレクトリ構造 -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-folder-open"></i> Railsアプリケーションのディレクトリ構造
+            </h2>
+            
+            <div class="directory-tree">
+<pre>
+<span class="tree-folder">📁 rails_app/</span>
+├── <span class="tree-folder">📁 app/</span>                     <span class="highlight-comment"># アプリケーションのコア</span>
+│   ├── <span class="tree-folder">📁 models/</span>                <span class="highlight-comment"># ActiveRecord::Base を継承</span>
+│   │   ├── <span class="tree-file">📄 application_record.rb</span>
+│   │   ├── <span class="tree-file">📄 user.rb</span>
+│   │   └── <span class="tree-folder">📁 concerns/</span>          <span class="highlight-comment"># 共通モジュール</span>
+│   ├── <span class="tree-folder">📁 controllers/</span>           <span class="highlight-comment"># ActionController::Base を継承</span>
+│   │   ├── <span class="tree-file">📄 application_controller.rb</span>
+│   │   ├── <span class="tree-file">📄 users_controller.rb</span>
+│   │   └── <span class="tree-folder">📁 concerns/</span>
+│   ├── <span class="tree-folder">📁 views/</span>                 <span class="highlight-comment"># ERBテンプレート</span>
+│   │   ├── <span class="tree-folder">📁 layouts/</span>
+│   │   │   └── <span class="tree-file">📄 application.html.erb</span>
+│   │   └── <span class="tree-folder">📁 users/</span>
+│   │       ├── <span class="tree-file">📄 index.html.erb</span>
+│   │       └── <span class="tree-file">📄 show.html.erb</span>
+│   ├── <span class="tree-folder">📁 jobs/</span>                  <span class="highlight-comment"># ActiveJob::Base を継承</span>
+│   │   └── <span class="tree-file">📄 application_job.rb</span>
+│   ├── <span class="tree-folder">📁 mailers/</span>               <span class="highlight-comment"># ActionMailer::Base を継承</span>
+│   │   └── <span class="tree-file">📄 application_mailer.rb</span>
+│   ├── <span class="tree-folder">📁 channels/</span>              <span class="highlight-comment"># ActionCable::Channel を継承</span>
+│   │   └── <span class="tree-file">📄 application_cable/</span>
+│   └── <span class="tree-folder">📁 helpers/</span>               <span class="highlight-comment"># ビューヘルパー</span>
+├── <span class="tree-folder">📁 config/</span>                    <span class="highlight-comment"># 設定ファイル</span>
+│   ├── <span class="tree-file">📄 routes.rb</span>              <span class="highlight-comment"># ルーティング定義</span>
+│   ├── <span class="tree-file">📄 application.rb</span>
+│   ├── <span class="tree-file">📄 database.yml</span>
+│   └── <span class="tree-folder">📁 initializers/</span>         <span class="highlight-comment"># 初期化スクリプト</span>
+├── <span class="tree-folder">📁 db/</span>                        <span class="highlight-comment"># データベース関連</span>
+│   ├── <span class="tree-folder">📁 migrate/</span>               <span class="highlight-comment"># ActiveRecord::Migration を継承</span>
+│   ├── <span class="tree-file">📄 schema.rb</span>
+│   └── <span class="tree-file">📄 seeds.rb</span>
+├── <span class="tree-folder">📁 lib/</span>                       <span class="highlight-comment"># カスタムライブラリ</span>
+├── <span class="tree-folder">📁 vendor/</span>                    <span class="highlight-comment"># サードパーティコード</span>
+└── <span class="tree-gem">💎 Gemfile</span>                    <span class="highlight-comment"># gem依存関係</span>
+</pre>
+            </div>
+        </div>
+
+        <!-- クラス継承チェーン -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-sitemap"></i> クラス継承チェーンとファイルマッピング
+            </h2>
+
+            <!-- Models -->
+            <div class="inheritance-diagram">
+                <h3 style="font-weight: bold; color: #1e40af; margin-bottom: 15px;">
+                    <i class="fas fa-database"></i> Models (データ層)
+                </h3>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="class-box">
+                        <div class="class-name">ActiveRecord::Base</div>
+                        <div class="class-path">gem: activerecord/lib/active_record/base.rb</div>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="class-box">
+                        <div class="class-name">ApplicationRecord</div>
+                        <div class="class-path">app/models/application_record.rb</div>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="class-box">
+                        <div class="class-name">User, Post, Comment...</div>
+                        <div class="class-path">app/models/user.rb, app/models/post.rb...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controllers -->
+            <div class="inheritance-diagram">
+                <h3 style="font-weight: bold; color: #92400e; margin-bottom: 15px;">
+                    <i class="fas fa-cogs"></i> Controllers (制御層)
+                </h3>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="class-box">
+                        <div class="class-name">ActionController::Base</div>
+                        <div class="class-path">gem: actionpack/lib/action_controller/base.rb</div>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="class-box">
+                        <div class="class-name">ApplicationController</div>
+                        <div class="class-path">app/controllers/application_controller.rb</div>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="class-box">
+                        <div class="class-name">UsersController, PostsController...</div>
+                        <div class="class-path">app/controllers/users_controller.rb...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jobs -->
+            <div class="inheritance-diagram">
+                <h3 style="font-weight: bold; color: #9f1239; margin-bottom: 15px;">
+                    <i class="fas fa-tasks"></i> Jobs (非同期処理)
+                </h3>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="class-box">
+                        <div class="class-name">ActiveJob::Base</div>
+                        <div class="class-path">gem: activejob/lib/active_job/base.rb</div>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="class-box">
+                        <div class="class-name">ApplicationJob</div>
+                        <div class="class-path">app/jobs/application_job.rb</div>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="class-box">
+                        <div class="class-name">EmailJob, DataProcessingJob...</div>
+                        <div class="class-path">app/jobs/email_job.rb...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- クラスとファイルの対応表 -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-table"></i> 主要クラスとファイルパスの対応表
+            </h2>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>クラス名</th>
+                            <th>タイプ</th>
+                            <th>ファイルパス</th>
+                            <th>親クラス</th>
+                            <th>役割</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ApplicationRecord</strong></td>
+                            <td><span class="badge badge-model">Model</span></td>
+                            <td><code>app/models/application_record.rb</code></td>
+                            <td>ActiveRecord::Base</td>
+                            <td>全モデルの基底クラス</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ApplicationController</strong></td>
+                            <td><span class="badge badge-controller">Controller</span></td>
+                            <td><code>app/controllers/application_controller.rb</code></td>
+                            <td>ActionController::Base</td>
+                            <td>全コントローラーの基底クラス</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ApplicationHelper</strong></td>
+                            <td><span class="badge badge-view">Helper</span></td>
+                            <td><code>app/helpers/application_helper.rb</code></td>
+                            <td>Module</td>
+                            <td>全ビューで使えるヘルパーメソッド</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ApplicationJob</strong></td>
+                            <td><span class="badge badge-job">Job</span></td>
+                            <td><code>app/jobs/application_job.rb</code></td>
+                            <td>ActiveJob::Base</td>
+                            <td>全ジョブの基底クラス</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ApplicationMailer</strong></td>
+                            <td><span class="badge badge-mailer">Mailer</span></td>
+                            <td><code>app/mailers/application_mailer.rb</code></td>
+                            <td>ActionMailer::Base</td>
+                            <td>全メーラーの基底クラス</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ApplicationCable::Connection</strong></td>
+                            <td><span class="badge badge-channel">Channel</span></td>
+                            <td><code>app/channels/application_cable/connection.rb</code></td>
+                            <td>ActionCable::Connection::Base</td>
+                            <td>WebSocket接続の基底クラス</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ApplicationCable::Channel</strong></td>
+                            <td><span class="badge badge-channel">Channel</span></td>
+                            <td><code>app/channels/application_cable/channel.rb</code></td>
+                            <td>ActionCable::Channel::Base</td>
+                            <td>全チャンネルの基底クラス</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Gemファイルの場所 -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-gem"></i> Rails Gemファイルの場所と読み込み順序
+            </h2>
+            
+            <div class="code-block">
+<span class="highlight-comment"># Gemファイルの一般的な場所</span>
+<span class="highlight-comment"># macOS/Linux:</span>
+~/.rbenv/versions/3.0.0/lib/ruby/gems/3.0.0/gems/
+~/.rvm/gems/ruby-3.0.0/gems/
+
+<span class="highlight-comment"># システムRuby:</span>
+/usr/local/lib/ruby/gems/3.0.0/gems/
+
+<span class="highlight-comment"># 主要なRails gem:</span>
+rails-7.0.0/
+├── actioncable-7.0.0/
+├── actionmailbox-7.0.0/
+├── actionmailer-7.0.0/
+├── actionpack-7.0.0/      <span class="highlight-comment"># ActionController</span>
+├── actiontext-7.0.0/
+├── actionview-7.0.0/       <span class="highlight-comment"># View関連</span>
+├── activejob-7.0.0/        <span class="highlight-comment"># Job関連</span>
+├── activemodel-7.0.0/      <span class="highlight-comment"># Model基礎</span>
+├── activerecord-7.0.0/     <span class="highlight-comment"># ORM</span>
+├── activestorage-7.0.0/    <span class="highlight-comment"># ファイル管理</span>
+├── activesupport-7.0.0/    <span class="highlight-comment"># 共通ユーティリティ</span>
+└── railties-7.0.0/         <span class="highlight-comment"># Rails本体</span>
+            </div>
+
+            <div style="margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                <h3 style="font-weight: bold; margin-bottom: 10px;">
+                    <i class="fas fa-info-circle" style="color: #3b82f6;"></i> 読み込み順序
+                </h3>
+                <ol style="list-style-type: decimal; margin-left: 20px;">
+                    <li><strong>boot.rb</strong> - Bundlerのセットアップ</li>
+                    <li><strong>application.rb</strong> - Railsフレームワークのrequire</li>
+                    <li><strong>environment.rb</strong> - アプリケーションの初期化</li>
+                    <li><strong>initializers/*.rb</strong> - 各種設定の読み込み（アルファベット順）</li>
+                    <li><strong>routes.rb</strong> - ルーティングの定義</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 実践例 -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-code"></i> 実際のコード例
+            </h2>
+            
+            <h3 style="font-weight: bold; margin: 20px 0 10px;">
+                <span class="badge badge-model">Model</span> app/models/user.rb
+            </h3>
+            <div class="code-block">
+<span class="highlight-comment"># app/models/application_record.rb</span>
+<span class="highlight-class">class</span> <span class="highlight-method">ApplicationRecord</span> < ActiveRecord::Base
+  self.abstract_class = true
+  <span class="highlight-comment"># 全モデル共通の設定</span>
+<span class="highlight-class">end</span>
+
+<span class="highlight-comment"># app/models/user.rb</span>
+<span class="highlight-class">class</span> <span class="highlight-method">User</span> < ApplicationRecord  <span class="highlight-comment"># ApplicationRecordを継承</span>
+  has_many :posts
+  validates :email, presence: true
+<span class="highlight-class">end</span>
+            </div>
+
+            <h3 style="font-weight: bold; margin: 20px 0 10px;">
+                <span class="badge badge-controller">Controller</span> app/controllers/users_controller.rb
+            </h3>
+            <div class="code-block">
+<span class="highlight-comment"># app/controllers/application_controller.rb</span>
+<span class="highlight-class">class</span> <span class="highlight-method">ApplicationController</span> < ActionController::Base
+  protect_from_forgery with: :exception
+  <span class="highlight-comment"># 全コントローラー共通の設定</span>
+<span class="highlight-class">end</span>
+
+<span class="highlight-comment"># app/controllers/users_controller.rb</span>
+<span class="highlight-class">class</span> <span class="highlight-method">UsersController</span> < ApplicationController  <span class="highlight-comment"># ApplicationControllerを継承</span>
+  before_action :authenticate_user!
+  
+  def index
+    @users = User.all
+  end
+<span class="highlight-class">end</span>
+            </div>
+        </div>
+
+        <!-- ナビゲーション -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between;">
+                <a href="page3.html" style="text-decoration: none;">
+                    <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-arrow-left"></i> ページ3へ
+                    </button>
+                </a>
+                <a href="page5.html" style="text-decoration: none;">
+                    <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        ページ5へ <i class="fas fa-arrow-right"></i>
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 検索機能のスクリプト -->
+    <script src="page-content.js"></script>
+    <script src="global-search-v2.js"></script>
+    <script src="hamburger-menu.js"></script>
+</body>
+</html>

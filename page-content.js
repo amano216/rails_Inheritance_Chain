@@ -131,5 +131,59 @@ const allPageContents = {
         attach detach 添付 削除
         upload download アップロード ダウンロード
         purge delete_all ファイル削除`
+    },
+    'page4.html': {
+        title: 'Rails クラス継承とディレクトリ構造',
+        keywords: ['ディレクトリ', 'ファイル構造', 'app/models', 'app/controllers', 'app/views', 'Gemfile', '継承チェーン', 'ApplicationRecord', 'ApplicationController'],
+        sections: [
+            'Railsアプリケーションのディレクトリ構造',
+            'クラス継承チェーンとファイルマッピング',
+            '主要クラスとファイルパスの対応表',
+            'Rails Gemファイルの場所と読み込み順序',
+            '実際のコード例'
+        ],
+        content: `Rails クラス継承とディレクトリ構造
+        rails_app app models controllers views jobs mailers channels helpers
+        config routes.rb application.rb database.yml initializers
+        db migrate schema.rb seeds.rb
+        lib vendor Gemfile Gemfile.lock
+        ActiveRecord::Base ApplicationRecord User Post Comment
+        ActionController::Base ApplicationController UsersController
+        ActiveJob::Base ApplicationJob EmailJob
+        ActionMailer::Base ApplicationMailer UserMailer
+        ActionCable::Channel ApplicationCable Connection
+        gem activerecord actionpack actionview activejob
+        actionmailer actioncable activestorage activesupport railties
+        rbenv rvm gems ruby バージョン管理
+        boot.rb environment.rb 初期化 読み込み順序`
+    },
+    'page5.html': {
+        title: 'Rails プロパティとメソッドの継承',
+        keywords: ['インスタンス変数', 'クラス変数', '@variable', '@@variable', 'attr_accessor', 'attr_reader', 'attr_writer', 'public', 'private', 'protected', 'super', 'method_missing', 'respond_to?'],
+        sections: [
+            'Ruby/Railsの変数の種類と継承',
+            '実例：変数の継承動作',
+            'アクセサメソッド（attr_*）',
+            'メソッドの可視性と継承',
+            'superキーワードの使い方',
+            'メソッド解決順序 (Method Resolution Order)',
+            'モジュールの継承（include, extend, prepend）',
+            'Railsでよく使う継承パターン'
+        ],
+        content: `Rails プロパティとメソッドの継承
+        ローカル変数 variable インスタンス変数 @variable
+        クラス変数 @@variable クラスインスタンス変数
+        グローバル変数 $variable 定数 CONSTANT
+        attr_accessor attr_reader attr_writer
+        ゲッター getter セッター setter アクセサ
+        public private protected 可視性 visibility
+        super 親クラス 呼び出し オーバーライド override
+        method_missing respond_to? respond_to_missing?
+        動的メソッド dynamic method metaprogramming
+        ancestors 継承チェーン method resolution order MRO
+        include extend prepend モジュール module mixin
+        concern ActiveSupport::Concern
+        abstract_class self.abstract_class = true
+        継承 inheritance 多重継承 単一継承`
     }
 };

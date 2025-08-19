@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rails プロパティとメソッドの継承 - ページ5</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="global-search.css">
+    <link rel="stylesheet" href="hamburger-menu.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .property-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .property-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .property-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .property-table tr:hover {
+            background: #f8fafc;
+        }
+        .code-example {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        .highlight-comment { color: #94a3b8; }
+        .highlight-class { color: #fbbf24; }
+        .highlight-method { color: #60a5fa; }
+        .highlight-string { color: #86efac; }
+        .highlight-variable { color: #f472b6; }
+        .highlight-keyword { color: #c084fc; }
+        .method-resolution {
+            background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .mro-item {
+            display: inline-block;
+            background: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 20px;
+            border: 2px solid #f59e0b;
+            font-weight: bold;
+        }
+        .arrow-right {
+            display: inline-block;
+            margin: 0 10px;
+            color: #f59e0b;
+            font-size: 20px;
+        }
+        .visibility-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .badge-public { background: #dcfce7; color: #166534; }
+        .badge-private { background: #fee2e2; color: #991b1b; }
+        .badge-protected { background: #fef3c7; color: #92400e; }
+        .attr-type {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .attr-accessor { background: #dbeafe; color: #1e40af; }
+        .attr-reader { background: #dcfce7; color: #166534; }
+        .attr-writer { background: #fce7f3; color: #9f1239; }
+        .inheritance-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+        .inheritance-box {
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            min-width: 250px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .inheritance-arrow {
+            font-size: 30px;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .feature-title {
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .feature-desc {
+            color: #64748b;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- グローバル検索 -->
+    <button class="open-global-search" onclick="document.getElementById('globalSearchInput').focus()">
+        <i class="fas fa-search"></i>
+        全ページ検索
+    </button>
+    
+    <div class="global-search-container">
+        <div class="global-search-header">
+            <input type="text" id="globalSearchInput" class="global-search-input" placeholder="全ページから検索...">
+            <button id="clearGlobalSearch" class="clear-global-search">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="globalSearchResults"></div>
+    </div>
+
+    <div class="container main-content-wrapper">
+        <!-- ヘッダー -->
+        <div class="card">
+            <h1 style="font-size: 2.5em; font-weight: bold; color: #1e293b; margin-bottom: 10px;">
+                <i class="fas fa-code-branch" style="color: #667eea;"></i>
+                Rails プロパティとメソッドの継承
+            </h1>
+            <p style="color: #64748b; font-size: 1.1em;">
+                クラス変数、インスタンス変数、メソッドの継承とオーバーライドを完全マスター
+            </p>
+        </div>
+
+        <!-- 変数の種類と継承 -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-database"></i> Ruby/Railsの変数の種類と継承
+            </h2>
+            
+            <table class="property-table">
+                <thead>
+                    <tr>
+                        <th>変数の種類</th>
+                        <th>記法</th>
+                        <th>スコープ</th>
+                        <th>継承</th>
+                        <th>使用例</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ローカル変数</strong></td>
+                        <td><code>variable</code></td>
+                        <td>メソッド内</td>
+                        <td>継承されない</td>
+                        <td><code>name = "John"</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>インスタンス変数</strong></td>
+                        <td><code>@variable</code></td>
+                        <td>インスタンス内</td>
+                        <td>継承される（インスタンスごと）</td>
+                        <td><code>@user = User.find(1)</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>クラス変数</strong></td>
+                        <td><code>@@variable</code></td>
+                        <td>クラス全体</td>
+                        <td>継承される（共有）</td>
+                        <td><code>@@count = 0</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>クラスインスタンス変数</strong></td>
+                        <td><code>@variable</code> (クラスレベル)</td>
+                        <td>クラス単体</td>
+                        <td>継承されない</td>
+                        <td><code>@instances = []</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>グローバル変数</strong></td>
+                        <td><code>$variable</code></td>
+                        <td>アプリ全体</td>
+                        <td>N/A（どこからでもアクセス可）</td>
+                        <td><code>$redis_client</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>定数</strong></td>
+                        <td><code>CONSTANT</code></td>
+                        <td>クラス/モジュール</td>
+                        <td>継承される</td>
+                        <td><code>MAX_USERS = 100</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 実例：変数の継承 -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-flask"></i> 実例：変数の継承動作
+            </h2>
+            
+            <div class="code-example">
+<span class="highlight-comment"># 親クラス</span>
+<span class="highlight-keyword">class</span> <span class="highlight-class">Animal</span>
+  <span class="highlight-variable">@@species_count</span> = 0        <span class="highlight-comment"># クラス変数（継承される・共有）</span>
+  <span class="highlight-variable">@category</span> = <span class="highlight-string">"動物"</span>        <span class="highlight-comment"># クラスインスタンス変数（継承されない）</span>
+  
+  <span class="highlight-keyword">def</span> <span class="highlight-method">initialize</span>(name)
+    <span class="highlight-variable">@name</span> = name            <span class="highlight-comment"># インスタンス変数</span>
+    <span class="highlight-variable">@@species_count</span> += 1
+  <span class="highlight-keyword">end</span>
+  
+  <span class="highlight-keyword">def</span> <span class="highlight-keyword">self</span>.<span class="highlight-method">category</span>
+    <span class="highlight-variable">@category</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-comment"># 子クラス</span>
+<span class="highlight-keyword">class</span> <span class="highlight-class">Dog</span> < Animal
+  <span class="highlight-variable">@category</span> = <span class="highlight-string">"犬"</span>          <span class="highlight-comment"># 独自のクラスインスタンス変数</span>
+  
+  <span class="highlight-keyword">def</span> <span class="highlight-method">bark</span>
+    <span class="highlight-string">"</span><span class="highlight-variable">#{@name}</span><span class="highlight-string"> says Woof!"</span>  <span class="highlight-comment"># @nameは継承されたinitializeで設定</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-comment"># 使用例</span>
+dog = Dog.new(<span class="highlight-string">"Buddy"</span>)
+puts dog.bark                <span class="highlight-comment"># => "Buddy says Woof!"</span>
+puts Dog.category             <span class="highlight-comment"># => "犬"</span>
+puts Animal.category          <span class="highlight-comment"># => "動物"</span>
+            </div>
+        </div>
+
+        <!-- attr_accessor, attr_reader, attr_writer -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-key"></i> アクセサメソッド（attr_*）
+            </h2>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-title">
+                        <span class="attr-type attr-reader">attr_reader</span>
+                    </div>
+                    <div class="feature-desc">
+                        読み取り専用のゲッターメソッドを生成
+                    </div>
+                    <div class="code-example" style="margin-top: 10px;">
+<span class="highlight-keyword">attr_reader</span> <span class="highlight-string">:name</span>
+<span class="highlight-comment"># 以下と同じ:</span>
+<span class="highlight-keyword">def</span> <span class="highlight-method">name</span>
+  <span class="highlight-variable">@name</span>
+<span class="highlight-keyword">end</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-title">
+                        <span class="attr-type attr-writer">attr_writer</span>
+                    </div>
+                    <div class="feature-desc">
+                        書き込み専用のセッターメソッドを生成
+                    </div>
+                    <div class="code-example" style="margin-top: 10px;">
+<span class="highlight-keyword">attr_writer</span> <span class="highlight-string">:name</span>
+<span class="highlight-comment"># 以下と同じ:</span>
+<span class="highlight-keyword">def</span> <span class="highlight-method">name=</span>(value)
+  <span class="highlight-variable">@name</span> = value
+<span class="highlight-keyword">end</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-title">
+                        <span class="attr-type attr-accessor">attr_accessor</span>
+                    </div>
+                    <div class="feature-desc">
+                        読み書き両方のメソッドを生成
+                    </div>
+                    <div class="code-example" style="margin-top: 10px;">
+<span class="highlight-keyword">attr_accessor</span> <span class="highlight-string">:name</span>
+<span class="highlight-comment"># attr_reader + attr_writer</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 継承での動作 -->
+            <div class="code-example">
+<span class="highlight-keyword">class</span> <span class="highlight-class">User</span> < ApplicationRecord
+  <span class="highlight-keyword">attr_accessor</span> <span class="highlight-string">:temp_password</span>     <span class="highlight-comment"># DBに保存しない一時的な属性</span>
+  <span class="highlight-keyword">attr_reader</span> <span class="highlight-string">:encrypted_data</span>      <span class="highlight-comment"># 読み取り専用</span>
+  <span class="highlight-keyword">attr_writer</span> <span class="highlight-string">:api_key</span>            <span class="highlight-comment"># 書き込み専用（セキュリティ）</span>
+  
+  <span class="highlight-comment"># 子クラスでも使用可能</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-keyword">class</span> <span class="highlight-class">AdminUser</span> < User
+  <span class="highlight-keyword">def</span> <span class="highlight-method">show_temp_password</span>
+    puts <span class="highlight-variable">@temp_password</span>  <span class="highlight-comment"># 親クラスのattr_accessorが継承される</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+            </div>
+        </div>
+
+        <!-- メソッドの可視性と継承 -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-eye"></i> メソッドの可視性と継承
+            </h2>
+            
+            <table class="property-table">
+                <thead>
+                    <tr>
+                        <th>可視性</th>
+                        <th>アクセス範囲</th>
+                        <th>継承での動作</th>
+                        <th>使用場面</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="visibility-badge badge-public">public</span></td>
+                        <td>どこからでもアクセス可能</td>
+                        <td>そのまま継承される</td>
+                        <td>外部APIとして公開するメソッド</td>
+                    </tr>
+                    <tr>
+                        <td><span class="visibility-badge badge-protected">protected</span></td>
+                        <td>クラス内部と子クラスから</td>
+                        <td>子クラスからアクセス可能</td>
+                        <td>子クラスで使う内部メソッド</td>
+                    </tr>
+                    <tr>
+                        <td><span class="visibility-badge badge-private">private</span></td>
+                        <td>定義したクラス内のみ</td>
+                        <td>継承されるが直接呼べない</td>
+                        <td>内部実装の詳細</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-example">
+<span class="highlight-keyword">class</span> <span class="highlight-class">ApplicationController</span> < ActionController::Base
+  <span class="highlight-keyword">public</span>
+  <span class="highlight-keyword">def</span> <span class="highlight-method">index</span>
+    render_page  <span class="highlight-comment"># privateメソッドを内部で呼び出し</span>
+  <span class="highlight-keyword">end</span>
+  
+  <span class="highlight-keyword">protected</span>
+  <span class="highlight-keyword">def</span> <span class="highlight-method">authenticate_admin</span>
+    <span class="highlight-comment"># 子クラスからアクセス可能</span>
+  <span class="highlight-keyword">end</span>
+  
+  <span class="highlight-keyword">private</span>
+  <span class="highlight-keyword">def</span> <span class="highlight-method">render_page</span>
+    <span class="highlight-comment"># このクラス内部のみ</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-keyword">class</span> <span class="highlight-class">UsersController</span> < ApplicationController
+  <span class="highlight-keyword">def</span> <span class="highlight-method">admin_area</span>
+    authenticate_admin  <span class="highlight-comment"># protectedメソッドを呼び出し可能</span>
+    <span class="highlight-comment"># render_page      # エラー！privateは直接呼べない</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+            </div>
+        </div>
+
+        <!-- superの使い方 -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-layer-group"></i> superキーワードの使い方
+            </h2>
+            
+            <div class="code-example">
+<span class="highlight-comment"># 基本的なsuperの使い方</span>
+<span class="highlight-keyword">class</span> <span class="highlight-class">Animal</span>
+  <span class="highlight-keyword">def</span> <span class="highlight-method">speak</span>(sound = <span class="highlight-string">"..."</span>)
+    <span class="highlight-string">"Animal says </span><span class="highlight-variable">#{sound}</span><span class="highlight-string">"</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-keyword">class</span> <span class="highlight-class">Dog</span> < Animal
+  <span class="highlight-keyword">def</span> <span class="highlight-method">speak</span>
+    <span class="highlight-keyword">super</span>(<span class="highlight-string">"Woof!"</span>)  <span class="highlight-comment"># 親クラスのメソッドを呼び出し</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-comment"># Railsでの実践例</span>
+<span class="highlight-keyword">class</span> <span class="highlight-class">AdminController</span> < ApplicationController
+  <span class="highlight-keyword">def</span> <span class="highlight-method">initialize</span>
+    <span class="highlight-keyword">super</span>  <span class="highlight-comment"># 親クラスのinitializeを実行</span>
+    <span class="highlight-variable">@admin_mode</span> = <span class="highlight-keyword">true</span>
+  <span class="highlight-keyword">end</span>
+  
+  <span class="highlight-keyword">def</span> <span class="highlight-method">create</span>
+    <span class="highlight-keyword">super</span> <span class="highlight-keyword">do</span> |resource|  <span class="highlight-comment"># ブロック付きsuper</span>
+      resource.role = <span class="highlight-string">'admin'</span>
+    <span class="highlight-keyword">end</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-comment"># super vs super()</span>
+<span class="highlight-keyword">def</span> <span class="highlight-method">method_name</span>(*args)
+  <span class="highlight-keyword">super</span>      <span class="highlight-comment"># 全引数を親メソッドに渡す</span>
+  <span class="highlight-keyword">super</span>()    <span class="highlight-comment"># 引数なしで親メソッドを呼ぶ</span>
+  <span class="highlight-keyword">super</span>(arg) <span class="highlight-comment"># 特定の引数で親メソッドを呼ぶ</span>
+<span class="highlight-keyword">end</span>
+            </div>
+        </div>
+
+        <!-- メソッド解決順序 (MRO) -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-sitemap"></i> メソッド解決順序 (Method Resolution Order)
+            </h2>
+            
+            <div class="method-resolution">
+                <h3 style="font-weight: bold; margin-bottom: 15px;">
+                    メソッドの探索順序
+                </h3>
+                <div>
+                    <span class="mro-item">1. 自クラス</span>
+                    <span class="arrow-right">→</span>
+                    <span class="mro-item">2. includeしたモジュール</span>
+                    <span class="arrow-right">→</span>
+                    <span class="mro-item">3. 親クラス</span>
+                    <span class="arrow-right">→</span>
+                    <span class="mro-item">4. 親のモジュール</span>
+                    <span class="arrow-right">→</span>
+                    <span class="mro-item">5. Object</span>
+                    <span class="arrow-right">→</span>
+                    <span class="mro-item">6. Kernel</span>
+                    <span class="arrow-right">→</span>
+                    <span class="mro-item">7. BasicObject</span>
+                </div>
+            </div>
+
+            <div class="code-example">
+<span class="highlight-comment"># ancestorsメソッドで確認</span>
+<span class="highlight-keyword">class</span> <span class="highlight-class">User</span> < ApplicationRecord
+  include Devise::Models
+  include Searchable
+<span class="highlight-keyword">end</span>
+
+puts User.ancestors
+<span class="highlight-comment"># => [User, Searchable, Devise::Models, ApplicationRecord, 
+#     ActiveRecord::Base, Object, Kernel, BasicObject]</span>
+
+<span class="highlight-comment"># method_missingとrespond_to?</span>
+<span class="highlight-keyword">class</span> <span class="highlight-class">DynamicModel</span>
+  <span class="highlight-keyword">def</span> <span class="highlight-method">method_missing</span>(method_name, *args)
+    <span class="highlight-keyword">if</span> method_name.to_s.start_with?(<span class="highlight-string">'find_by_'</span>)
+      attribute = method_name.to_s.sub(<span class="highlight-string">'find_by_'</span>, <span class="highlight-string">''</span>)
+      find_by(attribute => args.first)
+    <span class="highlight-keyword">else</span>
+      <span class="highlight-keyword">super</span>  <span class="highlight-comment"># 親クラスのmethod_missingへ</span>
+    <span class="highlight-keyword">end</span>
+  <span class="highlight-keyword">end</span>
+  
+  <span class="highlight-keyword">def</span> <span class="highlight-method">respond_to_missing?</span>(method_name, include_private = <span class="highlight-keyword">false</span>)
+    method_name.to_s.start_with?(<span class="highlight-string">'find_by_'</span>) || <span class="highlight-keyword">super</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+            </div>
+        </div>
+
+        <!-- モジュールのincludeとextend -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-puzzle-piece"></i> モジュールの継承（include, extend, prepend）
+            </h2>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-title">include</div>
+                    <div class="feature-desc">
+                        モジュールをインスタンスメソッドとして追加
+                    </div>
+                    <div class="code-example" style="margin-top: 10px;">
+<span class="highlight-keyword">module</span> <span class="highlight-class">Greetable</span>
+  <span class="highlight-keyword">def</span> <span class="highlight-method">hello</span>
+    <span class="highlight-string">"Hello!"</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-keyword">class</span> <span class="highlight-class">User</span>
+  include Greetable
+<span class="highlight-keyword">end</span>
+
+User.new.hello <span class="highlight-comment"># OK</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-title">extend</div>
+                    <div class="feature-desc">
+                        モジュールをクラスメソッドとして追加
+                    </div>
+                    <div class="code-example" style="margin-top: 10px;">
+<span class="highlight-keyword">module</span> <span class="highlight-class">Countable</span>
+  <span class="highlight-keyword">def</span> <span class="highlight-method">increment</span>
+    <span class="highlight-variable">@count</span> += 1
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-keyword">class</span> <span class="highlight-class">Page</span>
+  extend Countable
+<span class="highlight-keyword">end</span>
+
+Page.increment <span class="highlight-comment"># OK</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-title">prepend</div>
+                    <div class="feature-desc">
+                        モジュールを継承チェーンの前に挿入
+                    </div>
+                    <div class="code-example" style="margin-top: 10px;">
+<span class="highlight-keyword">module</span> <span class="highlight-class">Loggable</span>
+  <span class="highlight-keyword">def</span> <span class="highlight-method">save</span>
+    puts <span class="highlight-string">"Logging..."</span>
+    <span class="highlight-keyword">super</span>  <span class="highlight-comment"># 元のsaveを呼ぶ</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-keyword">class</span> <span class="highlight-class">Record</span>
+  prepend Loggable
+<span class="highlight-keyword">end</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 実践的な継承パターン -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-lightbulb"></i> Railsでよく使う継承パターン
+            </h2>
+            
+            <div class="inheritance-flow">
+                <div class="inheritance-box">
+                    <strong>ActiveRecord::Base</strong>
+                    <div style="font-size: 14px; color: #64748b; margin-top: 5px;">
+                        has_many, belongs_to, validates
+                    </div>
+                </div>
+                <div class="inheritance-arrow">↓</div>
+                <div class="inheritance-box">
+                    <strong>ApplicationRecord</strong>
+                    <div style="font-size: 14px; color: #64748b; margin-top: 5px;">
+                        共通のスコープ、コールバック
+                    </div>
+                </div>
+                <div class="inheritance-arrow">↓</div>
+                <div class="inheritance-box">
+                    <strong>User Model</strong>
+                    <div style="font-size: 14px; color: #64748b; margin-top: 5px;">
+                        固有のビジネスロジック
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+<span class="highlight-comment"># app/models/application_record.rb</span>
+<span class="highlight-keyword">class</span> <span class="highlight-class">ApplicationRecord</span> < ActiveRecord::Base
+  self.abstract_class = <span class="highlight-keyword">true</span>
+  
+  <span class="highlight-comment"># 全モデル共通のメソッド</span>
+  scope <span class="highlight-string">:recent</span>, -> { order(created_at: <span class="highlight-string">:desc</span>) }
+  
+  <span class="highlight-keyword">def</span> <span class="highlight-method">formatted_created_at</span>
+    created_at.strftime(<span class="highlight-string">"%Y年%m月%d日"</span>)
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+
+<span class="highlight-comment"># app/models/user.rb</span>
+<span class="highlight-keyword">class</span> <span class="highlight-class">User</span> < ApplicationRecord
+  <span class="highlight-comment"># ApplicationRecordのメソッドを継承</span>
+  <span class="highlight-comment"># recent スコープが使える</span>
+  <span class="highlight-comment"># formatted_created_at メソッドが使える</span>
+  
+  <span class="highlight-comment"># 独自のメソッドを追加</span>
+  <span class="highlight-keyword">def</span> <span class="highlight-method">full_name</span>
+    <span class="highlight-string">"</span><span class="highlight-variable">#{first_name}</span> <span class="highlight-variable">#{last_name}</span><span class="highlight-string">"</span>
+  <span class="highlight-keyword">end</span>
+  
+  <span class="highlight-comment"># 親のメソッドをオーバーライド</span>
+  <span class="highlight-keyword">def</span> <span class="highlight-method">formatted_created_at</span>
+    <span class="highlight-keyword">super</span> + <span class="highlight-string">" (</span><span class="highlight-variable">#{time_ago_in_words(created_at)}</span><span class="highlight-string">前)"</span>
+  <span class="highlight-keyword">end</span>
+<span class="highlight-keyword">end</span>
+            </div>
+        </div>
+
+        <!-- まとめ -->
+        <div class="card">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-graduation-cap"></i> プロパティとメソッド継承のまとめ
+            </h2>
+            
+            <div style="background: linear-gradient(135deg, #e0e7ff 0%, #cdd5f3 100%); padding: 25px; border-radius: 10px;">
+                <h3 style="font-weight: bold; margin-bottom: 15px;">重要なポイント</h3>
+                <ul style="list-style-type: disc; margin-left: 25px; line-height: 2;">
+                    <li><strong>インスタンス変数（@）</strong>：各インスタンスで独立、継承される</li>
+                    <li><strong>クラス変数（@@）</strong>：親子クラスで共有、注意が必要</li>
+                    <li><strong>privateメソッド</strong>：継承はされるが、子クラスから直接呼べない</li>
+                    <li><strong>protectedメソッド</strong>：子クラスからアクセス可能</li>
+                    <li><strong>super</strong>：親クラスの同名メソッドを呼び出し</li>
+                    <li><strong>include</strong>：インスタンスメソッドとして追加</li>
+                    <li><strong>extend</strong>：クラスメソッドとして追加</li>
+                    <li><strong>prepend</strong>：メソッドチェーンの先頭に挿入</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ナビゲーション -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between;">
+                <a href="page4.html" style="text-decoration: none;">
+                    <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-arrow-left"></i> ページ4へ
+                    </button>
+                </a>
+                <a href="index.html" style="text-decoration: none;">
+                    <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        ホームへ <i class="fas fa-home"></i>
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 検索機能のスクリプト -->
+    <script src="page-content.js"></script>
+    <script src="global-search-v2.js"></script>
+    <script src="hamburger-menu.js"></script>
+</body>
+</html>
