@@ -53,7 +53,6 @@
             width: 100%;
             min-width: 1200px;
             border-collapse: collapse;
-            table-layout: fixed;
         }
         th, td {
             border: 1px solid #ddd;
@@ -70,21 +69,33 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            white-space: nowrap;
         }
-        th:nth-child(1) {
+        /* 列幅の調整 */
+        th:nth-child(1),
+        td:nth-child(1) {
             width: 15%;
+            min-width: 180px;
         }
-        th:nth-child(2) {
+        th:nth-child(2),
+        td:nth-child(2) {
             width: 20%;
+            min-width: 240px;
         }
-        th:nth-child(3) {
+        th:nth-child(3),
+        td:nth-child(3) {
             width: 25%;
+            min-width: 300px;
         }
-        th:nth-child(4) {
+        th:nth-child(4),
+        td:nth-child(4) {
             width: 15%;
+            min-width: 180px;
         }
-        th:nth-child(5) {
+        th:nth-child(5),
+        td:nth-child(5) {
             width: 25%;
+            min-width: 300px;
         }
         tr:nth-child(even) {
             background-color: #f2f2f2;
