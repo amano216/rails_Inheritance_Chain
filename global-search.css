@@ -178,6 +178,12 @@
     margin-bottom: 0;
 }
 
+.snippet.more-results {
+    font-style: italic;
+    color: #a0aec0;
+    background: #f1f5f9;
+}
+
 .snippet mark {
     background: #fef3c7;
     color: #92400e;
