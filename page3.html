@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rails 対になるメソッド完全ガイド</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .pair-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+        }
+        .method-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .method-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .method-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4a5568;
+            font-family: 'Courier New', monospace;
+        }
+        .method-desc {
+            font-size: 0.9em;
+            color: #718096;
+            margin-top: 5px;
+        }
+        .arrow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: #4299e1;
+        }
+        .category-header {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 30px 0 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-align: center;
+        }
+        .explanation {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #4299e1;
+        }
+        .code-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .highlight-green { color: #48bb78; }
+        .highlight-blue { color: #4299e1; }
+        .highlight-yellow { color: #f6e05e; }
+        .highlight-pink { color: #ed64a6; }
+        .search-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-input {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            width: 250px;
+            font-size: 14px;
+        }
+        .clear-button {
+            padding: 8px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .search-highlight {
+            background-color: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .navigation a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: white;
+            color: #4a5568;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .navigation a:hover {
+            background-color: #f7fafc;
+            transform: translateY(-2px);
+        }
+        @media (max-width: 768px) {
+            .pair-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .arrow-container {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 検索バー -->
+    <div class="search-container">
+        <i class="fas fa-search text-gray-600"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="ページ内を検索...">
+        <button id="clearSearch" class="clear-button">
+            <i class="fas fa-times"></i>
+        </button>
+        <span id="searchStatus" class="search-status"></span>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1 class="text-4xl font-bold text-center mb-4">
+                <i class="fas fa-exchange-alt text-purple-600 mr-3"></i>
+                Rails 対になるメソッド完全ガイド
+            </h1>
+            <p class="text-center text-gray-600 mb-6">
+                Railsには「対」になるメソッドが多数存在します。これらは意図的に設計されており、直感的な操作を可能にします。
+            </p>
+            
+            <div class="navigation">
+                <a href="index.html">← ページ1へ</a>
+                <a href="page2.html">← ページ2へ</a>
+            </div>
+        </div>
+
+        <!-- データベース操作の対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-database mr-2"></i>データベース操作の対になるメソッド
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">create</div>
+                    <div class="method-desc">新規作成</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">destroy</div>
+                    <div class="method-desc">削除</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">save</div>
+                    <div class="method-desc">保存する</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">destroy / delete</div>
+                    <div class="method-desc">削除する</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">find</div>
+                    <div class="method-desc">IDで検索（見つからないとエラー）</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">find_by</div>
+                    <div class="method-desc">条件で検索（見つからないとnil）</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">first</div>
+                    <div class="method-desc">最初の1件</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">last</div>
+                    <div class="method-desc">最後の1件</div>
+                </div>
+            </div>
+            
+            <div class="code-example">
+<span class="highlight-pink"># 作成と削除</span>
+user = User.<span class="highlight-green">create</span>(name: "田中")
+user.<span class="highlight-green">destroy</span>
+
+<span class="highlight-pink"># 最初と最後</span>
+User.<span class="highlight-blue">first</span>  <span class="highlight-pink"># 最初のユーザー</span>
+User.<span class="highlight-blue">last</span>   <span class="highlight-pink"># 最後のユーザー</span>
+            </div>
+        </div>
+
+        <!-- バリデーションの対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-check-circle mr-2"></i>バリデーション・チェックの対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">valid?</div>
+                    <div class="method-desc">有効か？</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">invalid?</div>
+                    <div class="method-desc">無効か？</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">blank?</div>
+                    <div class="method-desc">空か？（nil, "", []など）</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">present?</div>
+                    <div class="method-desc">存在するか？</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">empty?</div>
+                    <div class="method-desc">空か？（配列・文字列）</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">any?</div>
+                    <div class="method-desc">1つでもあるか？</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">exists?</div>
+                    <div class="method-desc">DBに存在するか？</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">none?</div>
+                    <div class="method-desc">1つも存在しないか？</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">new_record?</div>
+                    <div class="method-desc">新規レコードか？</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">persisted?</div>
+                    <div class="method-desc">保存済みか？</div>
+                </div>
+            </div>
+            
+            <div class="code-example">
+<span class="highlight-pink"># 存在チェック</span>
+name.<span class="highlight-green">blank?</span>    <span class="highlight-pink"># => true (空の場合)</span>
+name.<span class="highlight-green">present?</span>  <span class="highlight-pink"># => false (空の場合)</span>
+
+<span class="highlight-pink"># レコードの状態</span>
+user.<span class="highlight-blue">new_record?</span>  <span class="highlight-pink"># => true (保存前)</span>
+user.<span class="highlight-blue">persisted?</span>   <span class="highlight-pink"># => false (保存前)</span>
+            </div>
+        </div>
+
+        <!-- コールバックの対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-sync-alt mr-2"></i>コールバック（前後処理）の対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">before_validation</div>
+                    <div class="method-desc">検証前</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">after_validation</div>
+                    <div class="method-desc">検証後</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">before_save</div>
+                    <div class="method-desc">保存前</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">after_save</div>
+                    <div class="method-desc">保存後</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">before_create</div>
+                    <div class="method-desc">作成前</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">after_create</div>
+                    <div class="method-desc">作成後</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">before_update</div>
+                    <div class="method-desc">更新前</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">after_update</div>
+                    <div class="method-desc">更新後</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">before_destroy</div>
+                    <div class="method-desc">削除前</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">after_destroy</div>
+                    <div class="method-desc">削除後</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">before_action</div>
+                    <div class="method-desc">アクション実行前</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">after_action</div>
+                    <div class="method-desc">アクション実行後</div>
+                </div>
+            </div>
+            
+            <div class="explanation">
+                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                <strong>なぜ対になっているか：</strong>
+                処理の前後で必要な処理（データの準備、後片付け、ログ記録など）を確実に実行するため。
+            </div>
+        </div>
+
+        <!-- トランザクションの対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-lock mr-2"></i>トランザクション・ロックの対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">lock</div>
+                    <div class="method-desc">ロックする</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">unlock</div>
+                    <div class="method-desc">ロック解除（自動）</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">transaction</div>
+                    <div class="method-desc">トランザクション開始</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">commit / rollback</div>
+                    <div class="method-desc">確定 / 取り消し</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">after_commit</div>
+                    <div class="method-desc">コミット後</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">after_rollback</div>
+                    <div class="method-desc">ロールバック後</div>
+                </div>
+            </div>
+            
+            <div class="code-example">
+<span class="highlight-pink"># トランザクション</span>
+ActiveRecord::Base.<span class="highlight-green">transaction</span> <span class="highlight-blue">do</span>
+  user.save!
+  account.save!
+<span class="highlight-blue">end</span>  <span class="highlight-pink"># 成功時は自動commit、エラー時は自動rollback</span>
+            </div>
+        </div>
+
+        <!-- マイグレーションの対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-table mr-2"></i>マイグレーション（DB構造変更）の対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">create_table</div>
+                    <div class="method-desc">テーブル作成</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">drop_table</div>
+                    <div class="method-desc">テーブル削除</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">add_column</div>
+                    <div class="method-desc">カラム追加</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">remove_column</div>
+                    <div class="method-desc">カラム削除</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">add_index</div>
+                    <div class="method-desc">インデックス追加</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">remove_index</div>
+                    <div class="method-desc">インデックス削除</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">add_foreign_key</div>
+                    <div class="method-desc">外部キー追加</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">remove_foreign_key</div>
+                    <div class="method-desc">外部キー削除</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">up</div>
+                    <div class="method-desc">マイグレーション実行</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">down</div>
+                    <div class="method-desc">マイグレーション取り消し</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">migrate</div>
+                    <div class="method-desc">マイグレーション適用</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">rollback</div>
+                    <div class="method-desc">マイグレーション巻き戻し</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- セッション・キャッシュの対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-memory mr-2"></i>セッション・キャッシュの対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">session[:key] = value</div>
+                    <div class="method-desc">セッション保存</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">session.delete(:key)</div>
+                    <div class="method-desc">セッション削除</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">cookies[:key] = value</div>
+                    <div class="method-desc">クッキー保存</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">cookies.delete(:key)</div>
+                    <div class="method-desc">クッキー削除</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">Rails.cache.write</div>
+                    <div class="method-desc">キャッシュ書き込み</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">Rails.cache.read</div>
+                    <div class="method-desc">キャッシュ読み込み</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">cache</div>
+                    <div class="method-desc">キャッシュする</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">expire_fragment</div>
+                    <div class="method-desc">キャッシュ削除</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- アソシエーションの対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-link mr-2"></i>アソシエーション（関連）の対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">has_one</div>
+                    <div class="method-desc">1つを持つ</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">belongs_to</div>
+                    <div class="method-desc">〜に属する</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">has_many</div>
+                    <div class="method-desc">複数を持つ</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">belongs_to</div>
+                    <div class="method-desc">〜に属する</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">has_and_belongs_to_many</div>
+                    <div class="method-desc">多対多（中間テーブル自動）</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">has_and_belongs_to_many</div>
+                    <div class="method-desc">多対多（相互に設定）</div>
+                </div>
+            </div>
+            
+            <div class="code-example">
+<span class="highlight-pink"># 1対多の関係</span>
+<span class="highlight-blue">class</span> User
+  <span class="highlight-green">has_many</span> :posts      <span class="highlight-pink"># ユーザーは複数の投稿を持つ</span>
+<span class="highlight-blue">end</span>
+
+<span class="highlight-blue">class</span> Post
+  <span class="highlight-green">belongs_to</span> :user    <span class="highlight-pink"># 投稿はユーザーに属する</span>
+<span class="highlight-blue">end</span>
+            </div>
+        </div>
+
+        <!-- ファイル操作の対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-file mr-2"></i>ファイル・ストレージの対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">attach</div>
+                    <div class="method-desc">ファイル添付</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">purge</div>
+                    <div class="method-desc">ファイル削除</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">upload</div>
+                    <div class="method-desc">アップロード</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">download</div>
+                    <div class="method-desc">ダウンロード</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">File.open</div>
+                    <div class="method-desc">ファイル開く</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">File.close</div>
+                    <div class="method-desc">ファイル閉じる</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ActiveJobの対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-clock mr-2"></i>非同期処理（ActiveJob）の対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">perform_later</div>
+                    <div class="method-desc">後で実行（非同期）</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">perform_now</div>
+                    <div class="method-desc">今すぐ実行（同期）</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">before_enqueue</div>
+                    <div class="method-desc">キュー登録前</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">after_enqueue</div>
+                    <div class="method-desc">キュー登録後</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">before_perform</div>
+                    <div class="method-desc">ジョブ実行前</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">after_perform</div>
+                    <div class="method-desc">ジョブ実行後</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文字列変換の対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-font mr-2"></i>文字列変換の対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">pluralize</div>
+                    <div class="method-desc">複数形に変換<br>user → users</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">singularize</div>
+                    <div class="method-desc">単数形に変換<br>users → user</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">camelize</div>
+                    <div class="method-desc">キャメルケースに<br>user_name → UserName</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">underscore</div>
+                    <div class="method-desc">スネークケースに<br>UserName → user_name</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">upcase</div>
+                    <div class="method-desc">大文字に変換</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">downcase</div>
+                    <div class="method-desc">小文字に変換</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">encode</div>
+                    <div class="method-desc">エンコード</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">decode</div>
+                    <div class="method-desc">デコード</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">encrypt</div>
+                    <div class="method-desc">暗号化</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">decrypt</div>
+                    <div class="method-desc">復号化</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 接続の対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-plug mr-2"></i>接続・購読の対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">connect</div>
+                    <div class="method-desc">接続する</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">disconnect</div>
+                    <div class="method-desc">切断する</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">subscribe</div>
+                    <div class="method-desc">購読する</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">unsubscribe</div>
+                    <div class="method-desc">購読解除</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">login</div>
+                    <div class="method-desc">ログイン</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">logout</div>
+                    <div class="method-desc">ログアウト</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 増減の対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-plus-minus mr-2"></i>増減・カウントの対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">increment</div>
+                    <div class="method-desc">増加（+1）</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">decrement</div>
+                    <div class="method-desc">減少（-1）</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">push / <<</div>
+                    <div class="method-desc">配列に追加</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">pop</div>
+                    <div class="method-desc">配列から取り出し</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">shift</div>
+                    <div class="method-desc">先頭から取り出し</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">unshift</div>
+                    <div class="method-desc">先頭に追加</div>
+                </div>
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">minimum</div>
+                    <div class="method-desc">最小値</div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">maximum</div>
+                    <div class="method-desc">最大値</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- まとめ -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-graduation-cap mr-2"></i>対になるメソッドの設計思想
+            </div>
+            
+            <div class="explanation">
+                <h3 class="text-xl font-bold mb-3">なぜRailsには対になるメソッドが多いのか？</h3>
+                
+                <div class="mb-4">
+                    <h4 class="font-bold text-lg mb-2">1. 直感的な操作性</h4>
+                    <p>「作成」があれば「削除」がある、「開始」があれば「終了」がある。
+                    人間の思考パターンに合わせて設計されています。</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h4 class="font-bold text-lg mb-2">2. 対称性による記憶のしやすさ</h4>
+                    <p>一方を覚えれば、もう一方も推測できる。学習コストを下げる設計です。</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h4 class="font-bold text-lg mb-2">3. 完全性の保証</h4>
+                    <p>「開く」処理には必ず「閉じる」処理が必要。リソースの適切な管理を促します。</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h4 class="font-bold text-lg mb-2">4. エラー処理の簡潔性</h4>
+                    <p>before/afterの対により、エラーが起きても確実に後処理ができます。</p>
+                </div>
+            </div>
+            
+            <div class="code-example">
+<span class="highlight-pink"># 対になるメソッドの美しさ</span>
+<span class="highlight-blue">class</span> User
+  <span class="highlight-green">before_create</span> :generate_token    <span class="highlight-pink"># 作成前にトークン生成</span>
+  <span class="highlight-green">after_create</span>  :send_welcome_mail  <span class="highlight-pink"># 作成後にメール送信</span>
+  
+  <span class="highlight-green">before_destroy</span> :check_dependencies <span class="highlight-pink"># 削除前に依存関係チェック</span>
+  <span class="highlight-green">after_destroy</span>  :cleanup_files      <span class="highlight-pink"># 削除後にファイル削除</span>
+<span class="highlight-blue">end</span>
+
+<span class="highlight-pink"># トランザクションの対称性</span>
+User.transaction <span class="highlight-blue">do</span>           <span class="highlight-pink"># 開始</span>
+  user.save!
+  account.save!
+<span class="highlight-blue">end</span>                          <span class="highlight-pink"># 終了（成功ならcommit、失敗ならrollback）</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="navigation">
+                <a href="index.html">← ページ1へ</a>
+                <a href="page2.html">← ページ2へ</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 検索機能のスクリプト -->
+    <script src="search.js"></script>
+</body>
+</html>
