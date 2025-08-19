@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Railsファミリー【完全版】- ページ2</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .navigation a {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .navigation a:hover {
+            background-color: #2980b9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #eaf5fb;
+        }
+        .family-head {
+            background-color: #ecf0f1;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        code {
+            background-color: #e8e8e8;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Railsファミリー【完全版】- ページ2</h1>
+        <p>Railsの追加機能と高度な概念を「家族」に例えて解説します。</p>
+        
+        <div class="navigation">
+            <a href="index.html">← ページ1へ戻る</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>大おじいちゃん<br>(Railsの主要機能)</th>
+                    <th>お父さん・お母さん<br>(主要クラス)</th>
+                    <th>子・孫<br>(メソッド・プロパティ)</th>
+                    <th>カタカナ読み</th>
+                    <th>英語の意味</th>
+                    <th>解説</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="4" class="family-head"><strong>ActiveStorage</strong><br>(ファイル管理担当)</td>
+                    <td rowspan="2"><code>ActiveStorage::Blob</code><br>(ファイルの実体)</td>
+                    <td><code>attach, attached?, purge</code></td>
+                    <td>アタッチ, アタッチド？, パージ</td>
+                    <td>添付する, 添付されている？, 削除する</td>
+                    <td>画像やPDFなどのファイルをモデルに紐付けて管理します。</td>
+                </tr>
+                <tr>
+                    <td><code>variant, preview</code></td>
+                    <td>バリアント, プレビュー</td>
+                    <td>変形版, 事前表示</td>
+                    <td>画像のサイズ変更やPDFのサムネイル作成などの処理を行います。</td>
+                </tr>
+                <tr>
+                    <td rowspan="2"><code>ActiveStorage::Attachment</code><br>(ファイルとモデルの接続)</td>
+                    <td><code>has_one_attached, has_many_attached</code></td>
+                    <td>ハズ・ワン・アタッチド, ハズ・メニー・アタッチド</td>
+                    <td>1つ添付されている, 複数添付されている</td>
+                    <td>モデルに1つまたは複数のファイルを関連付ける宣言です。</td>
+                </tr>
+                <tr>
+                    <td><code>with_attached_*</code></td>
+                    <td>ウィズ・アタッチド</td>
+                    <td>〜が添付された状態で</td>
+                    <td>N+1問題を防ぐために、ファイルを事前読み込みします。</td>
+                </tr>
+                <tr>
+                    <td rowspan="4" class="family-head"><strong>ActionCable</strong><br>(リアルタイム通信担当)</td>
+                    <td rowspan="2"><code>ActionCable::Connection</code><br>(接続の親)</td>
+                    <td><code>identified_by, connect, disconnect</code></td>
+                    <td>アイデンティファイド・バイ, コネクト, ディスコネクト</td>
+                    <td>〜によって識別される, 接続する, 切断する</td>
+                    <td>WebSocket接続を管理し、ユーザーを識別します。</td>
+                </tr>
+                <tr>
+                    <td><code>current_user</code></td>
+                    <td>カレント・ユーザー</td>
+                    <td>現在のユーザー</td>
+                    <td>WebSocket接続中の現在のユーザー情報を保持します。</td>
+                </tr>
+                <tr>
+                    <td rowspan="2"><code>ActionCable::Channel</code><br>(チャンネルの親)</td>
+                    <td><code>stream_from, stream_for</code></td>
+                    <td>ストリーム・フロム, ストリーム・フォー</td>
+                    <td>〜から流す, 〜のために流す</td>
+                    <td>特定のチャンネルからデータをリアルタイムで配信します。</td>
+                </tr>
+                <tr>
+                    <td><code>broadcast_to, perform</code></td>
+                    <td>ブロードキャスト・トゥ, パフォーム</td>
+                    <td>〜へ放送する, 実行する</td>
+                    <td>接続中のクライアントにメッセージを送信します。</td>
+                </tr>
+                <tr>
+                    <td rowspan="3" class="family-head"><strong>ActiveModel</strong><br>(モデル機能の部品担当)</td>
+                    <td><code>ActiveModel::Validations</code><br>(検証機能)</td>
+                    <td><code>validates_presence_of, validates_length_of, validates_format_of</code></td>
+                    <td>バリデーツ・プレゼンス・オブ, バリデーツ・レングス・オブ, バリデーツ・フォーマット・オブ</td>
+                    <td>存在を検証する, 長さを検証する, 形式を検証する</td>
+                    <td>データベースを使わないモデルでも検証機能を使えるようにします。</td>
+                </tr>
+                <tr>
+                    <td><code>ActiveModel::Serialization</code><br>(シリアル化機能)</td>
+                    <td><code>to_json, from_json, as_json</code></td>
+                    <td>トゥ・ジェイソン, フロム・ジェイソン, アズ・ジェイソン</td>
+                    <td>JSONへ, JSONから, JSONとして</td>
+                    <td>モデルのデータをJSON形式に変換したり、逆変換したりします。</td>
+                </tr>
+                <tr>
+                    <td><code>ActiveModel::Callbacks</code><br>(コールバック機能)</td>
+                    <td><code>before_save, after_save, around_save</code></td>
+                    <td>ビフォア・セーブ, アフター・セーブ, アラウンド・セーブ</td>
+                    <td>保存前, 保存後, 保存の前後</td>
+                    <td>特定のタイミングで自動的に処理を実行する仕組みです。</td>
+                </tr>
+                <tr>
+                    <td rowspan="3" class="family-head"><strong>ActionText</strong><br>(リッチテキスト担当)</td>
+                    <td rowspan="2"><code>ActionText::RichText</code><br>(リッチテキストの親)</td>
+                    <td><code>has_rich_text</code></td>
+                    <td>ハズ・リッチ・テキスト</td>
+                    <td>リッチテキストを持つ</td>
+                    <td>モデルにWYSIWYGエディタで編集可能なリッチテキストを追加します。</td>
+                </tr>
+                <tr>
+                    <td><code>body, to_plain_text, to_s</code></td>
+                    <td>ボディ, トゥ・プレイン・テキスト, トゥ・エス</td>
+                    <td>本文, プレーンテキストへ, 文字列へ</td>
+                    <td>リッチテキストの内容を取得・変換します。</td>
+                </tr>
+                <tr>
+                    <td><code>ActionText::Content</code><br>(コンテンツ処理)</td>
+                    <td><code>attachments, links</code></td>
+                    <td>アタッチメンツ, リンクス</td>
+                    <td>添付ファイル, リンク</td>
+                    <td>リッチテキスト内の添付ファイルやリンクを管理します。</td>
+                </tr>
+                <tr>
+                    <td rowspan="3" class="family-head"><strong>ActionMailbox</strong><br>(受信メール処理担当)</td>
+                    <td rowspan="2"><code>ActionMailbox::Base</code><br>(受信メールボックスの親)</td>
+                    <td><code>routing, process</code></td>
+                    <td>ルーティング, プロセス</td>
+                    <td>経路設定, 処理する</td>
+                    <td>受信したメールを適切な処理に振り分けます。</td>
+                </tr>
+                <tr>
+                    <td><code>before_processing, after_processing</code></td>
+                    <td>ビフォア・プロセシング, アフター・プロセシング</td>
+                    <td>処理前, 処理後</td>
+                    <td>メール処理の前後に実行する処理を定義します。</td>
+                </tr>
+                <tr>
+                    <td><code>ActionMailbox::InboundEmail</code><br>(受信メール)</td>
+                    <td><code>mail, source, status</code></td>
+                    <td>メイル, ソース, ステータス</td>
+                    <td>メール, 送信元, 状態</td>
+                    <td>受信したメールの内容と処理状態を管理します。</td>
+                </tr>
+                <tr>
+                    <td rowspan="3" class="family-head"><strong>Rack</strong><br>(Web標準担当)</td>
+                    <td><code>Rack::Request</code><br>(HTTPリクエスト)</td>
+                    <td><code>path, query_string, request_method</code></td>
+                    <td>パス, クエリ・ストリング, リクエスト・メソッド</td>
+                    <td>経路, 問い合わせ文字列, リクエスト方法</td>
+                    <td>HTTPリクエストの基本情報を扱います。</td>
+                </tr>
+                <tr>
+                    <td><code>Rack::Response</code><br>(HTTPレスポンス)</td>
+                    <td><code>status, headers, body</code></td>
+                    <td>ステータス, ヘッダーズ, ボディ</td>
+                    <td>状態, ヘッダー, 本文</td>
+                    <td>HTTPレスポンスの構成要素を管理します。</td>
+                </tr>
+                <tr>
+                    <td><code>Rack::Middleware</code><br>(ミドルウェア)</td>
+                    <td><code>call, app</code></td>
+                    <td>コール, アップ</td>
+                    <td>呼び出す, アプリケーション</td>
+                    <td>リクエストとレスポンスの間で処理を挟む仕組みです。</td>
+                </tr>
+                <tr>
+                    <td rowspan="3" class="family-head"><strong>Routes</strong><br>(道案内担当)</td>
+                    <td rowspan="2"><code>Rails.application.routes</code><br>(ルート設定)</td>
+                    <td><code>resources, resource, namespace</code></td>
+                    <td>リソーシズ, リソース, ネームスペース</td>
+                    <td>複数の資源, 単一の資源, 名前空間</td>
+                    <td>RESTfulなルートを自動生成したり、グループ化したりします。</td>
+                </tr>
+                <tr>
+                    <td><code>get, post, put, patch, delete</code></td>
+                    <td>ゲット, ポスト, プット, パッチ, デリート</td>
+                    <td>取得, 送信, 置換, 部分更新, 削除</td>
+                    <td>HTTPメソッドに対応したルートを定義します。</td>
+                </tr>
+                <tr>
+                    <td><code>URL Helpers</code><br>(URL生成ヘルパー)</td>
+                    <td><code>*_path, *_url</code></td>
+                    <td>パス, ユーアールエル</td>
+                    <td>経路, 完全なURL</td>
+                    <td>ルート名に基づいてURLを自動生成します（例：<code>users_path</code>）。</td>
+                </tr>
+                <tr>
+                    <td rowspan="2" class="family-head"><strong>Credentials</strong><br>(秘密情報管理担当)</td>
+                    <td><code>Rails.application.credentials</code><br>(認証情報)</td>
+                    <td><code>secret_key_base, dig</code></td>
+                    <td>シークレット・キー・ベース, ディグ</td>
+                    <td>秘密鍵の基礎, 掘る</td>
+                    <td>暗号化された設定ファイルから秘密情報を安全に取得します。</td>
+                </tr>
+                <tr>
+                    <td><code>Rails.application.secrets</code><br>(秘密設定)</td>
+                    <td><code>secret_token</code></td>
+                    <td>シークレット・トークン</td>
+                    <td>秘密のトークン</td>
+                    <td>アプリケーションの秘密情報を環境ごとに管理します（廃止予定）。</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="navigation">
+            <a href="index.html">← ページ1へ戻る</a>
+        </div>
+    </div>
+
+</body>
+</html>
