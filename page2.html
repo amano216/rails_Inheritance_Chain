@@ -330,14 +330,14 @@
                 <tr>
                     <td rowspan="15" class="family-head"><strong>ActionController</strong><br>(司令塔担当)</td>
                     <td><code>ActionController::Base</code><br>(コントローラーの親)</td>
-                    <td><code>render, redirect_to, params, session, flash, cookies</code></td>
-                    <td>ユーザーのリクエストに応じて処理を振り分ける司令塔の基本機能。</td>
+                    <td><code>render, redirect_to, params, session, flash, cookies, before_action, after_action, around_action</code></td>
+                    <td>ユーザーのリクエストに応じて処理を振り分ける司令塔。Rails 7以降フィルター機能も統合。</td>
                 </tr>
                 
                 <tr>
-                    <td rowspan="2"><code>ActionController::Filters</code><br>(フィルター系)</td>
+                    <td rowspan="2"><code>ActionController::Base</code><br>(フィルター機能統合)</td>
                     <td><code>before_action, after_action, around_action</code></td>
-                    <td>アクションの前後に共通処理を実行。例：ログインチェック。</td>
+                    <td>Rails 7以降、フィルター機能はBaseに統合。アクションの前後に共通処理を実行。</td>
                 </tr>
                 <tr>
                     <td><code>skip_before_action, only, except</code></td>
@@ -406,6 +406,17 @@
                     <td><code>ActionController::Renderers</code><br>(レンダラー)</td>
                     <td><code>respond_to, format.json, format.xml</code></td>
                     <td>リクエストの形式に応じて異なる形式でレスポンスを返す。</td>
+                </tr>
+                
+                <tr>
+                    <td colspan="4" class="text-center bg-yellow-50 border-2 border-yellow-300">
+                        <div class="p-3">
+                            <strong>⚠️ Rails 7以降の重要な変更</strong><br>
+                            <span class="text-sm">before_action, after_action, around_actionなどのフィルター機能は、<br>
+                            以前は<code>ActionController::Filters</code>モジュールにありましたが、<br>
+                            Rails 7以降は<code>ActionController::Base</code>に直接統合されました。</span>
+                        </div>
+                    </td>
                 </tr>
                 
                 <!-- ActionView セクション -->

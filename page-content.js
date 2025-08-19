@@ -50,7 +50,7 @@ const allPageContents = {
         ActionController::Parameters params strong parameters
         ActionController::Cookies cookies session
         ActionController::RequestForgeryProtection CSRF対策
-        ActionController::Filters before_action after_action around_action
+        ActionController::Base before_action after_action around_action skip_before_action
         ActionView::Base ビューの基底クラス
         ActionView::Helpers link_to form_with content_tag
         ActionView::Layouts layout yield content_for
