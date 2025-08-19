@@ -157,9 +157,17 @@ class GlobalSearchEngine {
 function initializeGlobalSearch() {
     const searchEngine = new GlobalSearchEngine();
     window.searchEngine = searchEngine; // グローバルに公開
-    const searchInput = document.getElementById('globalSearchInput');
+    
+    // ハンバーガーメニュー内の検索入力を優先的に取得
+    const headerSearchInput = document.querySelector('.header-search-input');
+    // 古い検索UIの入力（後方互換性のため）
+    const oldSearchInput = document.querySelector('.global-search-container .global-search-input');
+    
+    // 使用する検索入力を決定（ヘッダー内を優先）
+    const searchInput = headerSearchInput || oldSearchInput;
+    
     let searchResults = document.getElementById('globalSearchResults');
-    const clearButton = document.getElementById('clearGlobalSearch');
+    const clearButton = document.querySelector('.header-search-clear') || document.getElementById('clearGlobalSearch');
     
     if (!searchInput) return;
     

@@ -22,8 +22,8 @@ class HamburgerMenu {
                     </div>
                     <div class="header-search">
                         <i class="fas fa-search header-search-icon"></i>
-                        <input type="text" id="globalSearchInput" class="header-search-input" placeholder="全ページから検索...">
-                        <button class="header-search-clear" id="clearGlobalSearch" onclick="this.previousElementSibling.value=''; this.previousElementSibling.focus(); window.searchEngine && window.searchEngine.clearSearch();">
+                        <input type="text" class="header-search-input" placeholder="全ページから検索...">
+                        <button class="header-search-clear" onclick="this.previousElementSibling.value=''; this.previousElementSibling.focus(); window.searchEngine && window.searchEngine.clearSearch();">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
