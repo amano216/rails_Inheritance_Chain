@@ -194,8 +194,9 @@
         .score-display {
             text-align: center;
             padding: 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #f8f9fa;
+            color: #1e293b;
+            border: 2px solid #e5e7eb;
             border-radius: 12px;
             margin: 20px 0;
         }
@@ -203,6 +204,7 @@
             font-size: 48px;
             font-weight: bold;
             margin: 10px 0;
+            color: #667eea;
         }
         .score-message {
             font-size: 20px;
@@ -299,6 +301,177 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        /* 問題一覧表示用のスタイル */
+        .question-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .question-item {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .question-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .question-item-correct {
+            background: #dcfce7;
+            border-color: #16a34a;
+        }
+        .question-item-incorrect {
+            background: #fee2e2;
+            border-color: #dc2626;
+        }
+        .question-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .question-item-number {
+            font-weight: bold;
+            color: #667eea;
+        }
+        .question-item-text {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.4;
+        }
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #4b5563;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn-icon {
+            background: transparent;
+            border: 1px solid #e5e7eb;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-icon:hover {
+            background: #f3f4f6;
+        }
+        .stat-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: #64748b;
+        }
+        .explanation-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .next-button-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .code-block pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .code-block code {
+            color: #e2e8f0;
+        }
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .result-card {
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid;
+            background: white;
+        }
+        .result-card.correct {
+            border-color: #16a34a;
+            background: #dcfce7;
+        }
+        .result-card.incorrect {
+            border-color: #dc2626;
+            background: #fee2e2;
+        }
+        .result-card.unanswered {
+            border-color: #e5e7eb;
+            background: #f8f9fa;
+        }
+        .result-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .result-card-question {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.3;
+        }
+        .result-card-answer {
+            margin-top: 8px;
+            font-size: 11px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+        .your-answer {
+            color: #dc2626;
+            margin-bottom: 4px;
+        }
+        .correct-answer {
+            color: #16a34a;
+        }
     </style>
 </head>
 <body>
@@ -323,49 +496,45 @@
         <div class="card">
             <h1 style="font-size: 2.5em; font-weight: bold; color: #1e293b; margin-bottom: 10px;">
                 <i class="fas fa-brain" style="color: #667eea;"></i>
-                Rails 継承チェーン 理解度テスト
+                Rails 継承チェーン 実践練習
             </h1>
             <p style="color: #64748b; font-size: 1.1em;">
-                全5ページの内容を網羅的にテスト。あなたのRails継承チェーンの理解度を確認しましょう！
+                100問の実践問題でRails継承チェーンの理解を深めましょう。60%以上がコード読解問題です。
             </p>
         </div>
 
         <!-- カテゴリー選択 -->
         <div class="card" id="categorySelection">
             <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
-                <i class="fas fa-list"></i> テストカテゴリーを選択
+                <i class="fas fa-list"></i> 練習モードを選択
             </h2>
             
             <div class="quiz-categories">
-                <button class="category-btn" data-category="basics">
+                <button class="category-btn" data-category="codeReading">
+                    <i class="fas fa-code"></i><br>
+                    コード読解問題<br>
+                    <small id="questionCount" style="font-size: 0.8em; opacity: 0.8;">60問</small>
+                </button>
+                <button class="category-btn" data-category="theory">
                     <i class="fas fa-book"></i><br>
-                    基礎概念
-                </button>
-                <button class="category-btn" data-category="classes">
-                    <i class="fas fa-th-list"></i><br>
-                    主要クラス
-                </button>
-                <button class="category-btn" data-category="methods">
-                    <i class="fas fa-exchange-alt"></i><br>
-                    対になるメソッド
-                </button>
-                <button class="category-btn" data-category="directory">
-                    <i class="fas fa-folder-tree"></i><br>
-                    ディレクトリ構造
-                </button>
-                <button class="category-btn" data-category="inheritance">
-                    <i class="fas fa-code-branch"></i><br>
-                    プロパティ継承
+                    理論問題<br>
+                    <small style="font-size: 0.8em; opacity: 0.8;">40問</small>
                 </button>
                 <button class="category-btn active" data-category="all">
                     <i class="fas fa-globe"></i><br>
-                    総合テスト
+                    全問題<br>
+                    <small style="font-size: 0.8em; opacity: 0.8;">100問</small>
                 </button>
             </div>
 
-            <button class="quiz-btn primary" onclick="startQuiz()" style="width: 100%; margin-top: 20px;">
-                <i class="fas fa-play"></i> テストを開始
-            </button>
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="quiz-btn primary" onclick="startQuiz()" style="flex: 1;">
+                    <i class="fas fa-play"></i> 練習を開始
+                </button>
+                <button class="quiz-btn secondary" id="viewModeToggle" onclick="quiz.showQuestionList()" style="flex: 1;">
+                    <i class="fas fa-list"></i> 問題一覧を表示
+                </button>
+            </div>
         </div>
 
         <!-- クイズコンテナ -->
@@ -375,6 +544,9 @@
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <span id="currentQuestion">1</span> / <span id="totalQuestions">10</span> 問目
+                    </div>
+                    <div id="currentStats" style="display: flex; gap: 15px; align-items: center;">
+                        <!-- 統計情報が動的に表示される -->
                     </div>
                     <div class="timer">
                         <i class="fas fa-clock"></i>
@@ -412,7 +584,7 @@
             <div class="card">
                 <div class="score-display">
                     <h2 style="font-size: 2em; margin-bottom: 20px;">
-                        <i class="fas fa-trophy"></i> テスト結果
+                        <i class="fas fa-check-circle"></i> 練習結果
                     </h2>
                     <div class="score-number" id="scoreNumber">0%</div>
                     <div class="score-message" id="scoreMessage">お疲れ様でした！</div>
@@ -425,6 +597,10 @@
                         <div class="stat-card">
                             <div class="stat-number" id="incorrectCount">0</div>
                             <div class="stat-label">不正解数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="answeredCount">0/0</div>
+                            <div class="stat-label">回答済み</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-number" id="timeSpent">00:00</div>
@@ -454,8 +630,8 @@
     </div>
 
     <!-- クイズのJavaScript -->
-    <script src="quiz-data.js"></script>
-    <script src="quiz-engine.js"></script>
+    <script src="quiz-data-extended.js"></script>
+    <script src="quiz-engine-v2.js"></script>
 
     <!-- 検索機能のスクリプト -->
     <script src="page-content.js"></script>
