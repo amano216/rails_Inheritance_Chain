@@ -61,6 +61,12 @@ class HamburgerMenu {
                             <span class="page-number">5</span>
                             <span class="menu-item-badge">NEW</span>
                         </a>
+                        <a href="page6.html" class="menu-item" data-page="page6.html">
+                            <i class="fas fa-brain"></i>
+                            理解度テスト
+                            <span class="page-number">6</span>
+                            <span class="menu-item-badge">QUIZ</span>
+                        </a>
                     </div>
 
                     <!-- 便利機能 -->
@@ -193,7 +199,8 @@ class HamburgerMenu {
             'page2.html': 'Rails主要クラス一覧',
             'page3.html': '対になるメソッド',
             'page4.html': 'クラス継承とディレクトリ',
-            'page5.html': 'プロパティとメソッド継承'
+            'page5.html': 'プロパティとメソッド継承',
+            'page6.html': '理解度テスト'
         };
 
         let breadcrumbHTML = '<a href="index.html"><i class="fas fa-home"></i> ホーム</a>';

@@ -185,5 +185,32 @@ const allPageContents = {
         concern ActiveSupport::Concern
         abstract_class self.abstract_class = true
         継承 inheritance 多重継承 単一継承`
+    },
+    'page6.html': {
+        title: 'Rails 継承チェーン 理解度テスト',
+        keywords: ['テスト', 'クイズ', '理解度', '問題', '試験', 'quiz', 'test', 'assessment'],
+        sections: [
+            '基礎概念テスト',
+            '主要クラステスト',
+            '対になるメソッドテスト',
+            'ディレクトリ構造テスト',
+            'プロパティ継承テスト',
+            '総合テスト'
+        ],
+        content: `Rails 継承チェーン 理解度テスト クイズ
+        基礎概念 MVCモデル 継承チェーン
+        ApplicationRecord ApplicationController
+        ActiveRecord::Base ActionController::Base
+        include extend prepend concern module
+        対になるメソッド create destroy save delete
+        before after valid invalid has_many belongs_to
+        ディレクトリ構造 app/models app/controllers app/views
+        db/migrate config/routes.rb Gemfile
+        インスタンス変数 クラス変数 @variable @@variable
+        attr_accessor attr_reader attr_writer
+        public private protected super
+        method_missing respond_to? MRO
+        テスト問題 理解度チェック 学習確認
+        スコア 正解 不正解 解説`
     }
 };

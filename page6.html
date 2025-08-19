@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rails 継承チェーン 理解度テスト - ページ6</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="global-search.css">
+    <link rel="stylesheet" href="hamburger-menu.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .quiz-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        .category-btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-align: center;
+        }
+        .category-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .category-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        .quiz-container {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .quiz-container.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .question-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+        .answer-options {
+            display: grid;
+            gap: 10px;
+        }
+        .answer-option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .answer-option:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+        .answer-option.selected {
+            background: #eef2ff;
+            border-color: #667eea;
+        }
+        .answer-option.correct {
+            background: #dcfce7;
+            border-color: #16a34a;
+        }
+        .answer-option.incorrect {
+            background: #fee2e2;
+            border-color: #dc2626;
+        }
+        .answer-option.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .answer-label {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .explanation {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fef3c7;
+            border-radius: 8px;
+            border: 1px solid #fbbf24;
+            display: none;
+        }
+        .explanation.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 500px; }
+        }
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+        }
+        .quiz-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .quiz-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .quiz-btn.primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .quiz-btn.secondary {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+        .quiz-btn.secondary:hover {
+            background: #e5e7eb;
+        }
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s;
+        }
+        .score-display {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .score-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .score-message {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .difficulty-easy { background: #dcfce7; color: #166534; }
+        .difficulty-medium { background: #fef3c7; color: #92400e; }
+        .difficulty-hard { background: #fee2e2; color: #991b1b; }
+        .quiz-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e5e7eb;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+        .code-snippet {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .highlight-ruby { color: #fbbf24; }
+        .highlight-method { color: #60a5fa; }
+        .highlight-string { color: #86efac; }
+        .highlight-comment { color: #94a3b8; }
+        .results-summary {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .result-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        .result-item.correct {
+            border-left-color: #16a34a;
+        }
+        .result-item.incorrect {
+            border-left-color: #dc2626;
+        }
+        .result-icon {
+            font-size: 20px;
+            margin-right: 15px;
+        }
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e5e7eb;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- グローバル検索 -->
+    <button class="open-global-search" onclick="document.getElementById('globalSearchInput').focus()">
+        <i class="fas fa-search"></i>
+        全ページ検索
+    </button>
+    
+    <div class="global-search-container">
+        <div class="global-search-header">
+            <input type="text" id="globalSearchInput" class="global-search-input" placeholder="全ページから検索...">
+            <button id="clearGlobalSearch" class="clear-global-search">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="globalSearchResults"></div>
+    </div>
+
+    <div class="container main-content-wrapper">
+        <!-- ヘッダー -->
+        <div class="card">
+            <h1 style="font-size: 2.5em; font-weight: bold; color: #1e293b; margin-bottom: 10px;">
+                <i class="fas fa-brain" style="color: #667eea;"></i>
+                Rails 継承チェーン 理解度テスト
+            </h1>
+            <p style="color: #64748b; font-size: 1.1em;">
+                全5ページの内容を網羅的にテスト。あなたのRails継承チェーンの理解度を確認しましょう！
+            </p>
+        </div>
+
+        <!-- カテゴリー選択 -->
+        <div class="card" id="categorySelection">
+            <h2 style="font-size: 1.8em; font-weight: bold; margin-bottom: 20px;">
+                <i class="fas fa-list"></i> テストカテゴリーを選択
+            </h2>
+            
+            <div class="quiz-categories">
+                <button class="category-btn" data-category="basics">
+                    <i class="fas fa-book"></i><br>
+                    基礎概念
+                </button>
+                <button class="category-btn" data-category="classes">
+                    <i class="fas fa-th-list"></i><br>
+                    主要クラス
+                </button>
+                <button class="category-btn" data-category="methods">
+                    <i class="fas fa-exchange-alt"></i><br>
+                    対になるメソッド
+                </button>
+                <button class="category-btn" data-category="directory">
+                    <i class="fas fa-folder-tree"></i><br>
+                    ディレクトリ構造
+                </button>
+                <button class="category-btn" data-category="inheritance">
+                    <i class="fas fa-code-branch"></i><br>
+                    プロパティ継承
+                </button>
+                <button class="category-btn active" data-category="all">
+                    <i class="fas fa-globe"></i><br>
+                    総合テスト
+                </button>
+            </div>
+
+            <button class="quiz-btn primary" onclick="startQuiz()" style="width: 100%; margin-top: 20px;">
+                <i class="fas fa-play"></i> テストを開始
+            </button>
+        </div>
+
+        <!-- クイズコンテナ -->
+        <div class="quiz-container" id="quizContainer">
+            <!-- 進捗バー -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span id="currentQuestion">1</span> / <span id="totalQuestions">10</span> 問目
+                    </div>
+                    <div class="timer">
+                        <i class="fas fa-clock"></i>
+                        <span id="timer">00:00</span>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- 問題表示エリア -->
+            <div class="card" id="questionArea">
+                <!-- 動的に生成 -->
+            </div>
+
+            <!-- コントロール -->
+            <div class="card">
+                <div class="quiz-controls">
+                    <button class="quiz-btn secondary" onclick="previousQuestion()" id="prevBtn">
+                        <i class="fas fa-arrow-left"></i> 前の問題
+                    </button>
+                    <button class="quiz-btn primary" onclick="nextQuestion()" id="nextBtn">
+                        次の問題 <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="quiz-btn primary" onclick="finishQuiz()" id="finishBtn" style="display: none;">
+                        <i class="fas fa-flag-checkered"></i> テスト終了
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 結果表示 -->
+        <div class="quiz-container" id="resultsContainer">
+            <div class="card">
+                <div class="score-display">
+                    <h2 style="font-size: 2em; margin-bottom: 20px;">
+                        <i class="fas fa-trophy"></i> テスト結果
+                    </h2>
+                    <div class="score-number" id="scoreNumber">0%</div>
+                    <div class="score-message" id="scoreMessage">お疲れ様でした！</div>
+                    
+                    <div class="quiz-stats">
+                        <div class="stat-card">
+                            <div class="stat-number" id="correctCount">0</div>
+                            <div class="stat-label">正解数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="incorrectCount">0</div>
+                            <div class="stat-label">不正解数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="timeSpent">00:00</div>
+                            <div class="stat-label">所要時間</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-weight: bold; margin: 30px 0 20px;">
+                    <i class="fas fa-list-check"></i> 詳細結果
+                </h3>
+                <div class="results-summary" id="resultsSummary">
+                    <!-- 動的に生成 -->
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button class="quiz-btn primary" onclick="retryQuiz()" style="flex: 1;">
+                        <i class="fas fa-redo"></i> もう一度挑戦
+                    </button>
+                    <button class="quiz-btn secondary" onclick="resetQuiz()" style="flex: 1;">
+                        <i class="fas fa-home"></i> カテゴリー選択に戻る
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ナビゲーション -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between;">
+                <a href="page5.html" style="text-decoration: none;">
+                    <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-arrow-left"></i> ページ5へ
+                    </button>
+                </a>
+                <a href="index.html" style="text-decoration: none;">
+                    <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        ホームへ <i class="fas fa-home"></i>
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- クイズのJavaScript -->
+    <script src="quiz-data.js"></script>
+    <script src="quiz-engine.js"></script>
+
+    <!-- 検索機能のスクリプト -->
+    <script src="page-content.js"></script>
+    <script src="global-search-v2.js"></script>
+    <script src="hamburger-menu.js"></script>
+</body>
+</html>
