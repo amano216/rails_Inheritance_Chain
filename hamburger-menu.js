@@ -259,4 +259,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mainContent && !mainContent.classList.contains('main-content-wrapper')) {
         mainContent.classList.add('main-content-wrapper');
     }
+    
+    // グローバル検索の初期化を呼び出す（ハンバーガーメニュー作成後）
+    if (typeof initializeGlobalSearch === 'function') {
+        console.log('[HamburgerMenu] Calling initializeGlobalSearch');
+        setTimeout(() => initializeGlobalSearch(), 50);
+    }
 });

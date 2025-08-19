@@ -153,23 +153,40 @@ class GlobalSearchEngine {
     }
 }
 
+// 初期化フラグ
+let isSearchInitialized = false;
+
 // グローバル検索UIの初期化
 function initializeGlobalSearch() {
+    if (isSearchInitialized) {
+        console.log('[Search] Already initialized, skipping...');
+        return;
+    }
+    
+    console.log('[Search] Initializing global search...');
+    
     const searchEngine = new GlobalSearchEngine();
     window.searchEngine = searchEngine; // グローバルに公開
     
     // ハンバーガーメニュー内の検索入力を優先的に取得
     const headerSearchInput = document.querySelector('.header-search-input');
+    console.log('[Search] Header search input:', headerSearchInput);
+    
     // 古い検索UIの入力（後方互換性のため）
     const oldSearchInput = document.querySelector('.global-search-container .global-search-input');
+    console.log('[Search] Old search input:', oldSearchInput);
     
     // 使用する検索入力を決定（ヘッダー内を優先）
     const searchInput = headerSearchInput || oldSearchInput;
+    console.log('[Search] Using search input:', searchInput);
     
     let searchResults = document.getElementById('globalSearchResults');
     const clearButton = document.querySelector('.header-search-clear') || document.getElementById('clearGlobalSearch');
     
-    if (!searchInput) return;
+    if (!searchInput) {
+        console.error('[Search] No search input found!');
+        return;
+    }
     
     // 検索結果コンテナがなければ作成
     if (!searchResults) {
@@ -181,6 +198,7 @@ function initializeGlobalSearch() {
 
     function performGlobalSearch() {
         const query = searchInput.value;
+        console.log('[Search] Performing search for:', query);
         
         if (!query.trim()) {
             searchEngine.clearHighlights();
@@ -190,6 +208,7 @@ function initializeGlobalSearch() {
         }
 
         const results = searchEngine.search(query);
+        console.log('[Search] Search results:', results);
         
         // 現在のページのハイライト
         searchEngine.clearHighlights();
@@ -281,7 +300,9 @@ function initializeGlobalSearch() {
 
     // イベントリスナー
     let searchTimeout;
-    searchInput.addEventListener('input', () => {
+    console.log('[Search] Adding event listener to search input');
+    searchInput.addEventListener('input', (e) => {
+        console.log('[Search] Input event triggered, value:', e.target.value);
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(performGlobalSearch, 300);
     });
@@ -318,7 +339,21 @@ function initializeGlobalSearch() {
         searchInput.value = searchQuery;
         setTimeout(() => performGlobalSearch(), 500);
     }
+    
+    // 初期化完了
+    isSearchInitialized = true;
+    console.log('[Search] Initialization complete');
 }
 
-// ページ読み込み時に初期化
-document.addEventListener('DOMContentLoaded', initializeGlobalSearch);
+// グローバルに関数を公開
+window.initializeGlobalSearch = initializeGlobalSearch;
+
+// ページ読み込み時に初期化（ハンバーガーメニューの後に実行）
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('[Search] DOMContentLoaded - Waiting for hamburger menu...');
+    // ハンバーガーメニューが作成されるのを待つ
+    setTimeout(() => {
+        console.log('[Search] Starting initialization after delay');
+        initializeGlobalSearch();
+    }, 100);
+});
