@@ -20,12 +20,13 @@
             padding-bottom: 10px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background-color: #fff;
             padding: 25px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow-x: auto;
         }
         .navigation {
             text-align: center;
@@ -44,21 +45,46 @@
         .navigation a:hover {
             background-color: #2980b9;
         }
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
         table {
             width: 100%;
+            min-width: 1200px;
             border-collapse: collapse;
-            margin-top: 20px;
+            table-layout: fixed;
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 12px;
+            padding: 10px;
             text-align: left;
             vertical-align: top;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
         th {
             background-color: #3498db;
             color: white;
             font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        th:nth-child(1) {
+            width: 15%;
+        }
+        th:nth-child(2) {
+            width: 20%;
+        }
+        th:nth-child(3) {
+            width: 25%;
+        }
+        th:nth-child(4) {
+            width: 15%;
+        }
+        th:nth-child(5) {
+            width: 25%;
         }
         tr:nth-child(even) {
             background-color: #f2f2f2;
@@ -69,13 +95,27 @@
         .family-head {
             background-color: #ecf0f1;
             font-weight: bold;
-            font-size: 1.1em;
+            font-size: 1.05em;
+            min-width: 150px;
         }
         code {
             background-color: #e8e8e8;
             padding: 2px 5px;
             border-radius: 4px;
             font-family: "Courier New", Courier, monospace;
+            font-size: 0.9em;
+            display: inline-block;
+            max-width: 100%;
+            word-break: break-all;
+        }
+        td code {
+            margin: 2px 0;
+        }
+        /* レスポンシブ対応 */
+        @media screen and (max-width: 1400px) {
+            .container {
+                padding: 15px;
+            }
         }
     </style>
 </head>
@@ -89,6 +129,7 @@
             <a href="index.html">← ページ1へ戻る</a>
         </div>
 
+        <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
@@ -619,6 +660,7 @@
                 </tr>
             </tbody>
         </table>
+        </div>
         
         <div class="navigation">
             <a href="index.html">← ページ1へ戻る</a>
