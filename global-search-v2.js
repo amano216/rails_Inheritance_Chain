@@ -142,16 +142,34 @@ class GlobalSearchEngine {
         const processed = document.querySelectorAll('.search-processed');
         processed.forEach(el => el.classList.remove('search-processed'));
     }
+    
+    clearSearch() {
+        this.clearHighlights();
+        const searchResults = document.getElementById('globalSearchResults');
+        if (searchResults) {
+            searchResults.innerHTML = '';
+            searchResults.style.display = 'none';
+        }
+    }
 }
 
 // グローバル検索UIの初期化
 function initializeGlobalSearch() {
     const searchEngine = new GlobalSearchEngine();
+    window.searchEngine = searchEngine; // グローバルに公開
     const searchInput = document.getElementById('globalSearchInput');
-    const searchResults = document.getElementById('globalSearchResults');
+    let searchResults = document.getElementById('globalSearchResults');
     const clearButton = document.getElementById('clearGlobalSearch');
     
     if (!searchInput) return;
+    
+    // 検索結果コンテナがなければ作成
+    if (!searchResults) {
+        const resultsDiv = document.createElement('div');
+        resultsDiv.id = 'globalSearchResults';
+        document.body.appendChild(resultsDiv);
+        searchResults = resultsDiv;
+    }
 
     function performGlobalSearch() {
         const query = searchInput.value;

@@ -14,6 +14,57 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
+    gap: 20px;
+}
+
+/* ヘッダー内検索バー */
+.header-search {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+}
+
+.header-search-input {
+    width: 100%;
+    padding: 8px 35px 8px 35px;
+    border-radius: 20px;
+    border: none;
+    background: rgba(255,255,255,0.9);
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.header-search-input:focus {
+    outline: none;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+}
+
+.header-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #667eea;
+    font-size: 14px;
+}
+
+.header-search-clear {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #667eea;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    display: none;
+}
+
+.header-search-input:not(:placeholder-shown) + .header-search-clear {
+    display: block;
 }
 
 .menu-title {
@@ -189,6 +240,25 @@
     .menu-container {
         width: 85%;
         left: -85%;
+    }
+    
+    .menu-header {
+        flex-wrap: wrap;
+    }
+    
+    .header-search {
+        order: 3;
+        flex-basis: 100%;
+        max-width: none;
+        margin-top: 10px;
+    }
+    
+    .menu-title .title-text {
+        display: none;
+    }
+    
+    .menu-title i {
+        font-size: 24px;
     }
 }
 

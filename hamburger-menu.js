@@ -18,7 +18,14 @@ class HamburgerMenu {
                 <div class="menu-header">
                     <div class="menu-title">
                         <i class="fas fa-gem"></i>
-                        Rails 継承チェーン完全ガイド
+                        <span class="title-text">Rails 継承チェーン</span>
+                    </div>
+                    <div class="header-search">
+                        <i class="fas fa-search header-search-icon"></i>
+                        <input type="text" id="globalSearchInput" class="header-search-input" placeholder="全ページから検索...">
+                        <button class="header-search-clear" id="clearGlobalSearch" onclick="this.previousElementSibling.value=''; this.previousElementSibling.focus(); window.searchEngine && window.searchEngine.clearSearch();">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
                     <div class="hamburger-icon" id="hamburgerToggle">
                         <span class="hamburger-line"></span>
@@ -72,10 +79,6 @@ class HamburgerMenu {
                     <!-- 便利機能 -->
                     <div class="menu-section">
                         <div class="menu-section-title">便利機能</div>
-                        <a href="#" class="menu-item" onclick="document.getElementById('globalSearchInput').focus(); return false;">
-                            <i class="fas fa-search"></i>
-                            全ページ検索
-                        </a>
                         <a href="#" class="menu-item" onclick="window.print(); return false;">
                             <i class="fas fa-print"></i>
                             このページを印刷
@@ -239,9 +242,6 @@ function createQuickAccessButtons() {
         <div class="quick-access">
             <button class="quick-btn primary" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="ページトップへ">
                 <i class="fas fa-arrow-up"></i>
-            </button>
-            <button class="quick-btn" onclick="document.getElementById('globalSearchInput').focus()" title="検索">
-                <i class="fas fa-search"></i>
             </button>
         </div>
     `;

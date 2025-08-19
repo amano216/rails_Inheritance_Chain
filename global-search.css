@@ -1,57 +1,22 @@
-/* グローバル検索のスタイル */
+/* グローバル検索のスタイル - ヘッダーに統合 */
 .global-search-container {
+    display: none !important;
+}
+
+/* 検索結果の新しいコンテナ */
+#globalSearchResults {
     position: fixed;
-    top: 20px;
+    top: 60px;
     right: 20px;
-    z-index: 1000;
     width: 400px;
+    max-height: 500px;
     background: white;
     border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     padding: 15px;
-}
-
-.global-search-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.global-search-input {
-    flex: 1;
-    padding: 10px 15px;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: all 0.3s;
-}
-
-.global-search-input:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.clear-global-search {
-    padding: 8px 12px;
-    background: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.clear-global-search:hover {
-    background: #dc2626;
-}
-
-#globalSearchResults {
-    display: none;
-    max-height: 500px;
     overflow-y: auto;
-    margin-top: 15px;
+    display: none;
+    z-index: 1999;
 }
 
 .search-results-container {
@@ -243,25 +208,9 @@
     }
 }
 
-/* 検索ボタンスタイル */
+/* 検索ボタンスタイル - ヘッダーに統合したため非表示 */
 .open-global-search {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 999;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: none !important;
 }
 
 .open-global-search:hover {
