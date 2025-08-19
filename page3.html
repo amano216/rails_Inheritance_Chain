@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rails 対になるメソッド完全ガイド</title>
+    <title>Rails 対になるメソッド完全ガイド【親子孫の関係付き】</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", sans-serif;
+            line-height: 1.7;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -25,11 +25,31 @@
             margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
+        .family-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .grandparent { background: #fbbf24; color: #78350f; }
+        .parent { background: #60a5fa; color: #1e3a8a; }
+        .child { background: #34d399; color: #064e3b; }
+        .location-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            background: #e0e7ff;
+            color: #3730a3;
+            margin-left: 8px;
+        }
         .pair-container {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             gap: 20px;
-            align-items: center;
+            align-items: stretch;
             margin: 20px 0;
             padding: 20px;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -39,7 +59,6 @@
             background: white;
             padding: 15px;
             border-radius: 8px;
-            text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.3s;
         }
@@ -48,10 +67,28 @@
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
         .method-name {
-            font-size: 1.2em;
+            font-size: 1.1em;
             font-weight: bold;
-            color: #4a5568;
+            color: #2d3748;
             font-family: 'Courier New', monospace;
+            margin-bottom: 8px;
+        }
+        .method-hierarchy {
+            font-size: 0.9em;
+            color: #4a5568;
+            margin: 8px 0;
+            padding: 8px;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 3px solid #4299e1;
+        }
+        .method-location {
+            font-size: 0.85em;
+            color: #718096;
+            margin-top: 8px;
+            padding: 6px;
+            background: #edf2f7;
+            border-radius: 4px;
         }
         .method-desc {
             font-size: 0.9em;
@@ -76,8 +113,8 @@
             text-align: center;
         }
         .explanation {
-            background: #edf2f7;
-            padding: 15px;
+            background: #f0f4f8;
+            padding: 20px;
             border-radius: 8px;
             margin: 15px 0;
             border-left: 4px solid #4299e1;
@@ -85,17 +122,29 @@
         .code-example {
             background: #2d3748;
             color: #e2e8f0;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
-            margin: 10px 0;
+            margin: 15px 0;
             overflow-x: auto;
+            position: relative;
+        }
+        .code-label {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: #4a5568;
+            color: #cbd5e0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
         }
         .highlight-green { color: #48bb78; }
         .highlight-blue { color: #4299e1; }
         .highlight-yellow { color: #f6e05e; }
         .highlight-pink { color: #ed64a6; }
+        .highlight-orange { color: #ed8936; }
         .search-container {
             position: fixed;
             top: 20px;
@@ -124,12 +173,6 @@
             border-radius: 6px;
             cursor: pointer;
         }
-        .search-highlight {
-            background-color: #fef3c7;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-weight: 600;
-        }
         .navigation {
             text-align: center;
             margin: 20px 0;
@@ -147,6 +190,33 @@
         .navigation a:hover {
             background-color: #f7fafc;
             transform: translateY(-2px);
+        }
+        .inheritance-path {
+            background: linear-gradient(90deg, #fbbf24, #60a5fa, #34d399);
+            padding: 2px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .inheritance-content {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .warning-box {
+            background: #fed7d7;
+            border: 2px solid #fc8181;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .tip-box {
+            background: #c6f6d5;
+            border: 2px solid #68d391;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
         }
         @media (max-width: 768px) {
             .pair-container {
@@ -174,431 +244,424 @@
         <div class="card">
             <h1 class="text-4xl font-bold text-center mb-4">
                 <i class="fas fa-exchange-alt text-purple-600 mr-3"></i>
-                Rails 対になるメソッド完全ガイド
+                Rails 対になるメソッド完全ガイド【親子孫の関係付き】
             </h1>
             <p class="text-center text-gray-600 mb-6">
-                Railsには「対」になるメソッドが多数存在します。これらは意図的に設計されており、直感的な操作を可能にします。
+                Railsの全ての対になるメソッドを、親子孫の継承関係と記述場所を含めて完全解説
             </p>
             
             <div class="navigation">
                 <a href="index.html">← ページ1へ</a>
                 <a href="page2.html">← ページ2へ</a>
             </div>
+            
+            <div class="explanation">
+                <h3 class="text-xl font-bold mb-3">
+                    <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                    このページの見方
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <div>
+                        <span class="family-badge grandparent">大おじいちゃん</span>
+                        <span class="text-sm">Rails/Ruby本体の機能</span>
+                    </div>
+                    <div>
+                        <span class="family-badge parent">お父さん・お母さん</span>
+                        <span class="text-sm">主要なクラス・モジュール</span>
+                    </div>
+                    <div>
+                        <span class="family-badge child">子・孫</span>
+                        <span class="text-sm">具体的なメソッド</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <span class="location-badge"><i class="fas fa-file-code mr-1"></i>記述場所</span>
+                    <span class="text-sm">そのメソッドを書くファイルの種類</span>
+                </div>
+            </div>
         </div>
 
-        <!-- データベース操作の対 -->
+        <!-- ActiveRecord - データベース操作の対 -->
         <div class="card">
             <div class="category-header">
-                <i class="fas fa-database mr-2"></i>データベース操作の対になるメソッド
+                <i class="fas fa-database mr-2"></i>ActiveRecord - データベース操作の対
             </div>
             
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">create</div>
-                    <div class="method-desc">新規作成</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Base</span>
+                        <span class="family-badge child">create</span>
+                    </div>
+                    <div class="method-desc">新規作成して保存</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデル/コントローラー
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">destroy</div>
-                    <div class="method-desc">削除</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">save</div>
-                    <div class="method-desc">保存する</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">destroy / delete</div>
-                    <div class="method-desc">削除する</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">find</div>
-                    <div class="method-desc">IDで検索（見つからないとエラー）</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">find_by</div>
-                    <div class="method-desc">条件で検索（見つからないとnil）</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">first</div>
-                    <div class="method-desc">最初の1件</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">last</div>
-                    <div class="method-desc">最後の1件</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Base</span>
+                        <span class="family-badge child">destroy</span>
+                    </div>
+                    <div class="method-desc">レコードを削除</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデル/コントローラー
+                    </div>
                 </div>
             </div>
             
             <div class="code-example">
-<span class="highlight-pink"># 作成と削除</span>
-user = User.<span class="highlight-green">create</span>(name: "田中")
-user.<span class="highlight-green">destroy</span>
+                <span class="code-label">app/controllers/users_controller.rb</span>
+<span class="highlight-pink"># コントローラーでの使用例</span>
+<span class="highlight-blue">def</span> <span class="highlight-green">create</span>
+  @user = User.<span class="highlight-yellow">create</span>(user_params)  <span class="highlight-pink"># 新規作成</span>
+<span class="highlight-blue">end</span>
 
-<span class="highlight-pink"># 最初と最後</span>
-User.<span class="highlight-blue">first</span>  <span class="highlight-pink"># 最初のユーザー</span>
-User.<span class="highlight-blue">last</span>   <span class="highlight-pink"># 最後のユーザー</span>
+<span class="highlight-blue">def</span> <span class="highlight-green">destroy</span>
+  @user = User.find(params[:id])
+  @user.<span class="highlight-yellow">destroy</span>                     <span class="highlight-pink"># 削除</span>
+<span class="highlight-blue">end</span>
+            </div>
+
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">save / save!</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Persistence</span>
+                        <span class="family-badge child">save</span>
+                    </div>
+                    <div class="method-desc">保存（失敗時false / 例外）</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデル/コントローラー
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">destroy / destroy!</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Persistence</span>
+                        <span class="family-badge child">destroy</span>
+                    </div>
+                    <div class="method-desc">削除（失敗時false / 例外）</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデル/コントローラー
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <i class="fas fa-lightbulb text-green-600 mr-2"></i>
+                <strong>初心者向けTips:</strong>
+                <code>!</code>が付くメソッドは失敗時に例外を発生させます。トランザクション内で使うと便利です。
+            </div>
+
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">first</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::FinderMethods</span>
+                        <span class="family-badge child">first</span>
+                    </div>
+                    <div class="method-desc">最初の1件を取得</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">last</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::FinderMethods</span>
+                        <span class="family-badge child">last</span>
+                    </div>
+                    <div class="method-desc">最後の1件を取得</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
+                </div>
+            </div>
+
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">find</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::FinderMethods</span>
+                        <span class="family-badge child">find</span>
+                    </div>
+                    <div class="method-desc">IDで検索（見つからないとエラー）</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> コントローラーで多用
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">find_by</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::FinderMethods</span>
+                        <span class="family-badge child">find_by</span>
+                    </div>
+                    <div class="method-desc">条件で検索（見つからないとnil）</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> 条件検索で使用
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <span class="code-label">app/models/user.rb & app/controllers/users_controller.rb</span>
+<span class="highlight-pink"># findとfind_byの違い</span>
+user = User.<span class="highlight-yellow">find</span>(1)        <span class="highlight-pink"># ID=1がなければActiveRecord::RecordNotFound例外</span>
+user = User.<span class="highlight-yellow">find_by</span>(id: 1) <span class="highlight-pink"># ID=1がなければnil</span>
+
+<span class="highlight-pink"># firstとlastの使い方</span>
+oldest_user = User.order(:created_at).<span class="highlight-yellow">first</span>  <span class="highlight-pink"># 最も古いユーザー</span>
+newest_user = User.order(:created_at).<span class="highlight-yellow">last</span>   <span class="highlight-pink"># 最も新しいユーザー</span>
             </div>
         </div>
 
-        <!-- バリデーションの対 -->
+        <!-- バリデーション・チェックの対 -->
         <div class="card">
             <div class="category-header">
-                <i class="fas fa-check-circle mr-2"></i>バリデーション・チェックの対
+                <i class="fas fa-check-circle mr-2"></i>バリデーション・存在チェックの対
             </div>
             
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">valid?</div>
-                    <div class="method-desc">有効か？</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Validations</span>
+                        <span class="family-badge child">valid?</span>
+                    </div>
+                    <div class="method-desc">バリデーションが通るか？</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデル/コントローラー
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">invalid?</div>
-                    <div class="method-desc">無効か？</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Validations</span>
+                        <span class="family-badge child">invalid?</span>
+                    </div>
+                    <div class="method-desc">バリデーションが失敗するか？</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデル/コントローラー
+                    </div>
                 </div>
             </div>
-            
+
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">blank?</div>
-                    <div class="method-desc">空か？（nil, "", []など）</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">Object</span>
+                        <span class="family-badge child">blank?</span>
+                    </div>
+                    <div class="method-desc">空か？（nil, "", [], {}）</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">present?</div>
-                    <div class="method-desc">存在するか？</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">Object</span>
+                        <span class="family-badge child">present?</span>
+                    </div>
+                    <div class="method-desc">存在するか？（値がある）</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
                 </div>
             </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">empty?</div>
-                    <div class="method-desc">空か？（配列・文字列）</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">any?</div>
-                    <div class="method-desc">1つでもあるか？</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">exists?</div>
-                    <div class="method-desc">DBに存在するか？</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">none?</div>
-                    <div class="method-desc">1つも存在しないか？</div>
-                </div>
-            </div>
-            
+
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">new_record?</div>
-                    <div class="method-desc">新規レコードか？</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Persistence</span>
+                        <span class="family-badge child">new_record?</span>
+                    </div>
+                    <div class="method-desc">未保存のレコードか？</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデル/コントローラー
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">persisted?</div>
-                    <div class="method-desc">保存済みか？</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Persistence</span>
+                        <span class="family-badge child">persisted?</span>
+                    </div>
+                    <div class="method-desc">保存済みのレコードか？</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデル/コントローラー
+                    </div>
                 </div>
             </div>
-            
-            <div class="code-example">
-<span class="highlight-pink"># 存在チェック</span>
-name.<span class="highlight-green">blank?</span>    <span class="highlight-pink"># => true (空の場合)</span>
-name.<span class="highlight-green">present?</span>  <span class="highlight-pink"># => false (空の場合)</span>
 
-<span class="highlight-pink"># レコードの状態</span>
-user.<span class="highlight-blue">new_record?</span>  <span class="highlight-pink"># => true (保存前)</span>
-user.<span class="highlight-blue">persisted?</span>   <span class="highlight-pink"># => false (保存前)</span>
+            <div class="code-example">
+                <span class="code-label">app/controllers/users_controller.rb</span>
+<span class="highlight-pink"># バリデーションチェック</span>
+<span class="highlight-blue">if</span> @user.<span class="highlight-yellow">valid?</span>
+  @user.save
+<span class="highlight-blue">elsif</span> @user.<span class="highlight-yellow">invalid?</span>
+  render :edit  <span class="highlight-pink"># エラーを表示</span>
+<span class="highlight-blue">end</span>
+
+<span class="highlight-pink"># 存在チェック</span>
+<span class="highlight-blue">if</span> params[:name].<span class="highlight-yellow">blank?</span>
+  flash[:error] = <span class="highlight-green">"名前を入力してください"</span>
+<span class="highlight-blue">elsif</span> params[:name].<span class="highlight-yellow">present?</span>
+  @user.name = params[:name]
+<span class="highlight-blue">end</span>
+
+<span class="highlight-pink"># レコードの状態チェック</span>
+<span class="highlight-blue">if</span> @user.<span class="highlight-yellow">new_record?</span>
+  <span class="highlight-pink"># まだDBに保存されていない</span>
+  @user.activation_token = generate_token
+<span class="highlight-blue">elsif</span> @user.<span class="highlight-yellow">persisted?</span>
+  <span class="highlight-pink"># すでにDBに保存されている</span>
+  @user.update(last_login: Time.current)
+<span class="highlight-blue">end</span>
             </div>
         </div>
 
-        <!-- コールバックの対 -->
+        <!-- コールバック（前後処理）の対 -->
         <div class="card">
             <div class="category-header">
                 <i class="fas fa-sync-alt mr-2"></i>コールバック（前後処理）の対
             </div>
             
+            <div class="explanation">
+                <i class="fas fa-info-circle text-blue-500 mr-2"></i>
+                <strong>コールバックとは：</strong>
+                特定のタイミングで自動的に実行される処理。データの保存前後などに処理を挟み込めます。
+            </div>
+
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">before_validation</div>
-                    <div class="method-desc">検証前</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Callbacks</span>
+                        <span class="family-badge child">before_validation</span>
+                    </div>
+                    <div class="method-desc">バリデーション実行前</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデルファイル内
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">after_validation</div>
-                    <div class="method-desc">検証後</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Callbacks</span>
+                        <span class="family-badge child">after_validation</span>
+                    </div>
+                    <div class="method-desc">バリデーション実行後</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデルファイル内
+                    </div>
                 </div>
             </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">before_save</div>
-                    <div class="method-desc">保存前</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">after_save</div>
-                    <div class="method-desc">保存後</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">before_create</div>
-                    <div class="method-desc">作成前</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">after_create</div>
-                    <div class="method-desc">作成後</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">before_update</div>
-                    <div class="method-desc">更新前</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">after_update</div>
-                    <div class="method-desc">更新後</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">before_destroy</div>
-                    <div class="method-desc">削除前</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">after_destroy</div>
-                    <div class="method-desc">削除後</div>
-                </div>
-            </div>
-            
+
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">before_action</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionController</span>
+                        <span class="family-badge parent">AbstractController::Callbacks</span>
+                        <span class="family-badge child">before_action</span>
+                    </div>
                     <div class="method-desc">アクション実行前</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> コントローラーファイル内
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">after_action</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionController</span>
+                        <span class="family-badge parent">AbstractController::Callbacks</span>
+                        <span class="family-badge child">after_action</span>
+                    </div>
                     <div class="method-desc">アクション実行後</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> コントローラーファイル内
+                    </div>
                 </div>
             </div>
-            
-            <div class="explanation">
-                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
-                <strong>なぜ対になっているか：</strong>
-                処理の前後で必要な処理（データの準備、後片付け、ログ記録など）を確実に実行するため。
-            </div>
-        </div>
 
-        <!-- トランザクションの対 -->
-        <div class="card">
-            <div class="category-header">
-                <i class="fas fa-lock mr-2"></i>トランザクション・ロックの対
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">lock</div>
-                    <div class="method-desc">ロックする</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">unlock</div>
-                    <div class="method-desc">ロック解除（自動）</div>
+            <div class="inheritance-path">
+                <div class="inheritance-content">
+                    <strong>継承の流れ：</strong><br>
+                    モデル: ApplicationRecord → ActiveRecord::Base → before_*/after_* メソッド<br>
+                    コントローラー: ApplicationController → ActionController::Base → before_*/after_* メソッド
                 </div>
             </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">transaction</div>
-                    <div class="method-desc">トランザクション開始</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">commit / rollback</div>
-                    <div class="method-desc">確定 / 取り消し</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">after_commit</div>
-                    <div class="method-desc">コミット後</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">after_rollback</div>
-                    <div class="method-desc">ロールバック後</div>
-                </div>
-            </div>
-            
+
             <div class="code-example">
-<span class="highlight-pink"># トランザクション</span>
-ActiveRecord::Base.<span class="highlight-green">transaction</span> <span class="highlight-blue">do</span>
-  user.save!
-  account.save!
-<span class="highlight-blue">end</span>  <span class="highlight-pink"># 成功時は自動commit、エラー時は自動rollback</span>
+                <span class="code-label">app/models/user.rb</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">User</span> < ApplicationRecord
+  <span class="highlight-pink"># モデルでのコールバック</span>
+  <span class="highlight-yellow">before_validation</span> :normalize_email
+  <span class="highlight-yellow">after_validation</span> :set_default_role
+  
+  <span class="highlight-yellow">before_create</span> :generate_confirmation_token
+  <span class="highlight-yellow">after_create</span> :send_welcome_email
+  
+  <span class="highlight-yellow">before_destroy</span> :check_admin_count
+  <span class="highlight-yellow">after_destroy</span> :cleanup_associated_files
+  
+  <span class="highlight-blue">private</span>
+  
+  <span class="highlight-blue">def</span> <span class="highlight-green">normalize_email</span>
+    self.email = email.downcase.strip <span class="highlight-blue">if</span> email.present?
+  <span class="highlight-blue">end</span>
+<span class="highlight-blue">end</span>
+            </div>
+
+            <div class="code-example">
+                <span class="code-label">app/controllers/users_controller.rb</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">UsersController</span> < ApplicationController
+  <span class="highlight-pink"># コントローラーでのコールバック</span>
+  <span class="highlight-yellow">before_action</span> :authenticate_user!
+  <span class="highlight-yellow">before_action</span> :set_user, only: [:show, :edit, :update, :destroy]
+  <span class="highlight-yellow">after_action</span> :track_activity, only: [:create, :update]
+  
+  <span class="highlight-blue">private</span>
+  
+  <span class="highlight-blue">def</span> <span class="highlight-green">set_user</span>
+    @user = User.find(params[:id])
+  <span class="highlight-blue">end</span>
+<span class="highlight-blue">end</span>
             </div>
         </div>
 
-        <!-- マイグレーションの対 -->
-        <div class="card">
-            <div class="category-header">
-                <i class="fas fa-table mr-2"></i>マイグレーション（DB構造変更）の対
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">create_table</div>
-                    <div class="method-desc">テーブル作成</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">drop_table</div>
-                    <div class="method-desc">テーブル削除</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">add_column</div>
-                    <div class="method-desc">カラム追加</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">remove_column</div>
-                    <div class="method-desc">カラム削除</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">add_index</div>
-                    <div class="method-desc">インデックス追加</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">remove_index</div>
-                    <div class="method-desc">インデックス削除</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">add_foreign_key</div>
-                    <div class="method-desc">外部キー追加</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">remove_foreign_key</div>
-                    <div class="method-desc">外部キー削除</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">up</div>
-                    <div class="method-desc">マイグレーション実行</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">down</div>
-                    <div class="method-desc">マイグレーション取り消し</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">migrate</div>
-                    <div class="method-desc">マイグレーション適用</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">rollback</div>
-                    <div class="method-desc">マイグレーション巻き戻し</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- セッション・キャッシュの対 -->
-        <div class="card">
-            <div class="category-header">
-                <i class="fas fa-memory mr-2"></i>セッション・キャッシュの対
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">session[:key] = value</div>
-                    <div class="method-desc">セッション保存</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">session.delete(:key)</div>
-                    <div class="method-desc">セッション削除</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">cookies[:key] = value</div>
-                    <div class="method-desc">クッキー保存</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">cookies.delete(:key)</div>
-                    <div class="method-desc">クッキー削除</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">Rails.cache.write</div>
-                    <div class="method-desc">キャッシュ書き込み</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">Rails.cache.read</div>
-                    <div class="method-desc">キャッシュ読み込み</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">cache</div>
-                    <div class="method-desc">キャッシュする</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">expire_fragment</div>
-                    <div class="method-desc">キャッシュ削除</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- アソシエーションの対 -->
+        <!-- アソシエーション（関連）の対 -->
         <div class="card">
             <div class="category-header">
                 <i class="fas fa-link mr-2"></i>アソシエーション（関連）の対
@@ -607,134 +670,385 @@ ActiveRecord::Base.<span class="highlight-green">transaction</span> <span class=
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">has_one</div>
-                    <div class="method-desc">1つを持つ</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Associations</span>
+                        <span class="family-badge child">has_one</span>
+                    </div>
+                    <div class="method-desc">1つを持つ側</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデルファイル（親側）
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">belongs_to</div>
-                    <div class="method-desc">〜に属する</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Associations</span>
+                        <span class="family-badge child">belongs_to</span>
+                    </div>
+                    <div class="method-desc">〜に属する側</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデルファイル（子側）
+                    </div>
                 </div>
             </div>
-            
+
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">has_many</div>
-                    <div class="method-desc">複数を持つ</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Associations</span>
+                        <span class="family-badge child">has_many</span>
+                    </div>
+                    <div class="method-desc">複数を持つ側</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデルファイル（親側）
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">belongs_to</div>
-                    <div class="method-desc">〜に属する</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Associations</span>
+                        <span class="family-badge child">belongs_to</span>
+                    </div>
+                    <div class="method-desc">〜に属する側</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデルファイル（子側）
+                    </div>
                 </div>
             </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">has_and_belongs_to_many</div>
-                    <div class="method-desc">多対多（中間テーブル自動）</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">has_and_belongs_to_many</div>
-                    <div class="method-desc">多対多（相互に設定）</div>
-                </div>
+
+            <div class="warning-box">
+                <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
+                <strong>重要：</strong>
+                <code>belongs_to</code>側のテーブルに外部キー（例：user_id）が必要です！
             </div>
-            
+
             <div class="code-example">
-<span class="highlight-pink"># 1対多の関係</span>
-<span class="highlight-blue">class</span> User
-  <span class="highlight-green">has_many</span> :posts      <span class="highlight-pink"># ユーザーは複数の投稿を持つ</span>
+                <span class="code-label">app/models/user.rb & app/models/post.rb</span>
+<span class="highlight-pink"># app/models/user.rb</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">User</span> < ApplicationRecord
+  <span class="highlight-yellow">has_many</span> :posts           <span class="highlight-pink"># ユーザーは複数の投稿を持つ</span>
+  <span class="highlight-yellow">has_one</span> :profile          <span class="highlight-pink"># ユーザーは1つのプロフィールを持つ</span>
 <span class="highlight-blue">end</span>
 
-<span class="highlight-blue">class</span> Post
-  <span class="highlight-green">belongs_to</span> :user    <span class="highlight-pink"># 投稿はユーザーに属する</span>
+<span class="highlight-pink"># app/models/post.rb</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">Post</span> < ApplicationRecord
+  <span class="highlight-yellow">belongs_to</span> :user          <span class="highlight-pink"># 投稿はユーザーに属する（user_idカラムが必要）</span>
+<span class="highlight-blue">end</span>
+
+<span class="highlight-pink"># app/models/profile.rb</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">Profile</span> < ApplicationRecord
+  <span class="highlight-yellow">belongs_to</span> :user          <span class="highlight-pink"># プロフィールはユーザーに属する（user_idカラムが必要）</span>
+<span class="highlight-blue">end</span>
+            </div>
+
+            <div class="explanation">
+                <strong>多対多の関係：</strong>
+                <code>has_and_belongs_to_many</code>または<code>has_many :through</code>を使用
+            </div>
+
+            <div class="code-example">
+                <span class="code-label">app/models/ - 多対多の関係</span>
+<span class="highlight-pink"># パターン1: has_and_belongs_to_many（中間テーブル自動）</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">Post</span> < ApplicationRecord
+  <span class="highlight-yellow">has_and_belongs_to_many</span> :tags    <span class="highlight-pink"># posts_tagsテーブルが必要</span>
+<span class="highlight-blue">end</span>
+
+<span class="highlight-blue">class</span> <span class="highlight-orange">Tag</span> < ApplicationRecord
+  <span class="highlight-yellow">has_and_belongs_to_many</span> :posts
+<span class="highlight-blue">end</span>
+
+<span class="highlight-pink"># パターン2: has_many :through（中間モデル経由）</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">Doctor</span> < ApplicationRecord
+  <span class="highlight-yellow">has_many</span> :appointments
+  <span class="highlight-yellow">has_many</span> :patients, <span class="highlight-green">through:</span> :appointments
+<span class="highlight-blue">end</span>
+
+<span class="highlight-blue">class</span> <span class="highlight-orange">Appointment</span> < ApplicationRecord  <span class="highlight-pink"># 中間モデル</span>
+  <span class="highlight-yellow">belongs_to</span> :doctor
+  <span class="highlight-yellow">belongs_to</span> :patient
+<span class="highlight-blue">end</span>
+
+<span class="highlight-blue">class</span> <span class="highlight-orange">Patient</span> < ApplicationRecord
+  <span class="highlight-yellow">has_many</span> :appointments
+  <span class="highlight-yellow">has_many</span> :doctors, <span class="highlight-green">through:</span> :appointments
 <span class="highlight-blue">end</span>
             </div>
         </div>
 
-        <!-- ファイル操作の対 -->
+        <!-- マイグレーション（DB構造変更）の対 -->
         <div class="card">
             <div class="category-header">
-                <i class="fas fa-file mr-2"></i>ファイル・ストレージの対
+                <i class="fas fa-table mr-2"></i>マイグレーション（DB構造変更）の対
             </div>
             
             <div class="pair-container">
                 <div class="method-box">
-                    <div class="method-name">attach</div>
-                    <div class="method-desc">ファイル添付</div>
+                    <div class="method-name">create_table</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Migration</span>
+                        <span class="family-badge child">create_table</span>
+                    </div>
+                    <div class="method-desc">テーブル作成</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> db/migrate/ファイル
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
-                    <div class="method-name">purge</div>
-                    <div class="method-desc">ファイル削除</div>
+                    <div class="method-name">drop_table</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Migration</span>
+                        <span class="family-badge child">drop_table</span>
+                    </div>
+                    <div class="method-desc">テーブル削除</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> db/migrate/ファイル
+                    </div>
                 </div>
             </div>
-            
+
             <div class="pair-container">
                 <div class="method-box">
-                    <div class="method-name">upload</div>
-                    <div class="method-desc">アップロード</div>
+                    <div class="method-name">add_column</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Migration</span>
+                        <span class="family-badge child">add_column</span>
+                    </div>
+                    <div class="method-desc">カラム追加</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> db/migrate/ファイル
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
-                    <div class="method-name">download</div>
-                    <div class="method-desc">ダウンロード</div>
+                    <div class="method-name">remove_column</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Migration</span>
+                        <span class="family-badge child">remove_column</span>
+                    </div>
+                    <div class="method-desc">カラム削除</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> db/migrate/ファイル
+                    </div>
                 </div>
             </div>
-            
+
             <div class="pair-container">
                 <div class="method-box">
-                    <div class="method-name">File.open</div>
-                    <div class="method-desc">ファイル開く</div>
+                    <div class="method-name">up</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Migration</span>
+                        <span class="family-badge child">up</span>
+                    </div>
+                    <div class="method-desc">マイグレーション実行時</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> db/migrate/ファイル
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
-                    <div class="method-name">File.close</div>
-                    <div class="method-desc">ファイル閉じる</div>
+                    <div class="method-name">down</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveRecord</span>
+                        <span class="family-badge parent">ActiveRecord::Migration</span>
+                        <span class="family-badge child">down</span>
+                    </div>
+                    <div class="method-desc">ロールバック時</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> db/migrate/ファイル
+                    </div>
                 </div>
+            </div>
+
+            <div class="code-example">
+                <span class="code-label">db/migrate/20240101000000_create_users.rb</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">CreateUsers</span> < ActiveRecord::Migration[7.0]
+  <span class="highlight-blue">def</span> <span class="highlight-green">change</span>
+    <span class="highlight-pink"># changeメソッドは自動的にupとdownを生成</span>
+    <span class="highlight-yellow">create_table</span> :users <span class="highlight-blue">do</span> |t|
+      t.string :name
+      t.string :email
+      t.timestamps
+    <span class="highlight-blue">end</span>
+    
+    <span class="highlight-yellow">add_index</span> :users, :email, unique: <span class="highlight-blue">true</span>
+  <span class="highlight-blue">end</span>
+<span class="highlight-blue">end</span>
+
+<span class="highlight-pink"># または明示的にupとdownを定義</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">AddAgeToUsers</span> < ActiveRecord::Migration[7.0]
+  <span class="highlight-blue">def</span> <span class="highlight-green">up</span>
+    <span class="highlight-yellow">add_column</span> :users, :age, :integer
+  <span class="highlight-blue">end</span>
+  
+  <span class="highlight-blue">def</span> <span class="highlight-green">down</span>
+    <span class="highlight-yellow">remove_column</span> :users, :age
+  <span class="highlight-blue">end</span>
+<span class="highlight-blue">end</span>
+            </div>
+
+            <div class="tip-box">
+                <i class="fas fa-terminal text-green-600 mr-2"></i>
+                <strong>コマンド：</strong>
+                <code>rails db:migrate</code>でupを実行、<code>rails db:rollback</code>でdownを実行
             </div>
         </div>
 
-        <!-- ActiveJobの対 -->
+        <!-- ビュー・レンダリング系の対 -->
         <div class="card">
             <div class="category-header">
-                <i class="fas fa-clock mr-2"></i>非同期処理（ActiveJob）の対
+                <i class="fas fa-eye mr-2"></i>ビュー・レンダリング系の対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">render</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionController</span>
+                        <span class="family-badge parent">ActionController::Rendering</span>
+                        <span class="family-badge child">render</span>
+                    </div>
+                    <div class="method-desc">ビューを表示</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> コントローラー
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">redirect_to</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionController</span>
+                        <span class="family-badge parent">ActionController::Redirecting</span>
+                        <span class="family-badge child">redirect_to</span>
+                    </div>
+                    <div class="method-desc">別のURLへ転送</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> コントローラー
+                    </div>
+                </div>
+            </div>
+
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">content_for</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionView</span>
+                        <span class="family-badge parent">ActionView::Helpers::CaptureHelper</span>
+                        <span class="family-badge child">content_for</span>
+                    </div>
+                    <div class="method-desc">コンテンツを定義</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> ビューファイル
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">yield</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">Ruby</span>
+                        <span class="family-badge parent">ActionView::Base</span>
+                        <span class="family-badge child">yield</span>
+                    </div>
+                    <div class="method-desc">コンテンツを表示</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> レイアウトファイル
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <span class="code-label">app/controllers/users_controller.rb</span>
+<span class="highlight-blue">def</span> <span class="highlight-green">create</span>
+  @user = User.new(user_params)
+  <span class="highlight-blue">if</span> @user.save
+    <span class="highlight-yellow">redirect_to</span> @user, notice: <span class="highlight-green">'ユーザーを作成しました'</span>  <span class="highlight-pink"># 別のページへ</span>
+  <span class="highlight-blue">else</span>
+    <span class="highlight-yellow">render</span> :new  <span class="highlight-pink"># 同じページを再表示（エラー表示）</span>
+  <span class="highlight-blue">end</span>
+<span class="highlight-blue">end</span>
+            </div>
+
+            <div class="code-example">
+                <span class="code-label">app/views/users/show.html.erb & app/views/layouts/application.html.erb</span>
+<span class="highlight-pink">&lt;!-- app/views/users/show.html.erb --&gt;</span>
+&lt;% <span class="highlight-yellow">content_for</span> :title <span class="highlight-blue">do</span> %&gt;
+  ユーザープロフィール
+&lt;% <span class="highlight-blue">end</span> %&gt;
+
+&lt;% <span class="highlight-yellow">content_for</span> :sidebar <span class="highlight-blue">do</span> %&gt;
+  &lt;div class="user-info"&gt;...&lt;/div&gt;
+&lt;% <span class="highlight-blue">end</span> %&gt;
+
+<span class="highlight-pink">&lt;!-- app/views/layouts/application.html.erb --&gt;</span>
+&lt;title&gt;&lt;%= <span class="highlight-yellow">yield</span> :title || <span class="highlight-green">'デフォルトタイトル'</span> %&gt;&lt;/title&gt;
+&lt;aside&gt;&lt;%= <span class="highlight-yellow">yield</span> :sidebar %&gt;&lt;/aside&gt;
+&lt;main&gt;&lt;%= <span class="highlight-yellow">yield</span> %&gt;&lt;/main&gt;  <span class="highlight-pink">&lt;!-- メインコンテンツ --&gt;</span>
+            </div>
+        </div>
+
+        <!-- ActiveJob（非同期処理）の対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-clock mr-2"></i>ActiveJob（非同期処理）の対
             </div>
             
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">perform_later</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveJob</span>
+                        <span class="family-badge parent">ActiveJob::Enqueuing</span>
+                        <span class="family-badge child">perform_later</span>
+                    </div>
                     <div class="method-desc">後で実行（非同期）</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも呼び出し可能
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">perform_now</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveJob</span>
+                        <span class="family-badge parent">ActiveJob::Execution</span>
+                        <span class="family-badge child">perform_now</span>
+                    </div>
                     <div class="method-desc">今すぐ実行（同期）</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも呼び出し可能
+                    </div>
                 </div>
             </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">before_enqueue</div>
-                    <div class="method-desc">キュー登録前</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">after_enqueue</div>
-                    <div class="method-desc">キュー登録後</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">before_perform</div>
-                    <div class="method-desc">ジョブ実行前</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">after_perform</div>
-                    <div class="method-desc">ジョブ実行後</div>
-                </div>
+
+            <div class="code-example">
+                <span class="code-label">app/jobs/email_job.rb & 呼び出し側</span>
+<span class="highlight-pink"># app/jobs/email_job.rb</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">EmailJob</span> < ApplicationJob
+  queue_as :default
+  
+  <span class="highlight-blue">def</span> <span class="highlight-green">perform</span>(user)
+    UserMailer.welcome(user).deliver_now
+  <span class="highlight-blue">end</span>
+<span class="highlight-blue">end</span>
+
+<span class="highlight-pink"># コントローラーなどから呼び出し</span>
+EmailJob.<span class="highlight-yellow">perform_later</span>(@user)  <span class="highlight-pink"># バックグラウンドで実行（推奨）</span>
+EmailJob.<span class="highlight-yellow">perform_now</span>(@user)    <span class="highlight-pink"># その場で実行（処理が止まる）</span>
+
+<span class="highlight-pink"># 5分後に実行</span>
+EmailJob.set(wait: 5.minutes).<span class="highlight-yellow">perform_later</span>(@user)
             </div>
         </div>
 
@@ -747,208 +1061,616 @@ ActiveRecord::Base.<span class="highlight-green">transaction</span> <span class=
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">pluralize</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Inflector</span>
+                        <span class="family-badge child">pluralize</span>
+                    </div>
                     <div class="method-desc">複数形に変換<br>user → users</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">singularize</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Inflector</span>
+                        <span class="family-badge child">singularize</span>
+                    </div>
                     <div class="method-desc">単数形に変換<br>users → user</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
                 </div>
             </div>
-            
+
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">camelize</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Inflector</span>
+                        <span class="family-badge child">camelize</span>
+                    </div>
                     <div class="method-desc">キャメルケースに<br>user_name → UserName</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">underscore</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Inflector</span>
+                        <span class="family-badge child">underscore</span>
+                    </div>
                     <div class="method-desc">スネークケースに<br>UserName → user_name</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
                 </div>
             </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">upcase</div>
-                    <div class="method-desc">大文字に変換</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">downcase</div>
-                    <div class="method-desc">小文字に変換</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">encode</div>
-                    <div class="method-desc">エンコード</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">decode</div>
-                    <div class="method-desc">デコード</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">encrypt</div>
-                    <div class="method-desc">暗号化</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">decrypt</div>
-                    <div class="method-desc">復号化</div>
-                </div>
+
+            <div class="code-example">
+                <span class="code-label">rails console での使用例</span>
+<span class="highlight-pink"># 複数形・単数形</span>
+<span class="highlight-green">"user"</span>.<span class="highlight-yellow">pluralize</span>      <span class="highlight-pink"># => "users"</span>
+<span class="highlight-green">"users"</span>.<span class="highlight-yellow">singularize</span>   <span class="highlight-pink"># => "user"</span>
+<span class="highlight-green">"person"</span>.<span class="highlight-yellow">pluralize</span>    <span class="highlight-pink"># => "people" (不規則変化も対応)</span>
+
+<span class="highlight-pink"># ケース変換</span>
+<span class="highlight-green">"user_profile"</span>.<span class="highlight-yellow">camelize</span>     <span class="highlight-pink"># => "UserProfile"</span>
+<span class="highlight-green">"UserProfile"</span>.<span class="highlight-yellow">underscore</span>    <span class="highlight-pink"># => "user_profile"</span>
+
+<span class="highlight-pink"># 人間向け表記</span>
+<span class="highlight-green">"user_id"</span>.<span class="highlight-yellow">humanize</span>          <span class="highlight-pink"># => "User"</span>
+<span class="highlight-green">"email_address"</span>.<span class="highlight-yellow">titleize</span>    <span class="highlight-pink"># => "Email Address"</span>
             </div>
         </div>
 
-        <!-- 接続の対 -->
+        <!-- ルーティング系の対 -->
         <div class="card">
             <div class="category-header">
-                <i class="fas fa-plug mr-2"></i>接続・購読の対
+                <i class="fas fa-route mr-2"></i>ルーティング系の対
             </div>
             
             <div class="pair-container">
                 <div class="method-box">
-                    <div class="method-name">connect</div>
-                    <div class="method-desc">接続する</div>
+                    <div class="method-name">resources</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionDispatch</span>
+                        <span class="family-badge parent">ActionDispatch::Routing::Mapper</span>
+                        <span class="family-badge child">resources</span>
+                    </div>
+                    <div class="method-desc">複数形リソース（index付き）</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> config/routes.rb
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
-                    <div class="method-name">disconnect</div>
-                    <div class="method-desc">切断する</div>
+                    <div class="method-name">resource</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionDispatch</span>
+                        <span class="family-badge parent">ActionDispatch::Routing::Mapper</span>
+                        <span class="family-badge child">resource</span>
+                    </div>
+                    <div class="method-desc">単数形リソース（indexなし）</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> config/routes.rb
+                    </div>
                 </div>
+            </div>
+
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">member</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionDispatch</span>
+                        <span class="family-badge parent">ActionDispatch::Routing::Mapper</span>
+                        <span class="family-badge child">member</span>
+                    </div>
+                    <div class="method-desc">個別のリソースに対する操作<br>/users/1/activate</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> config/routes.rb
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">collection</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionDispatch</span>
+                        <span class="family-badge parent">ActionDispatch::Routing::Mapper</span>
+                        <span class="family-badge child">collection</span>
+                    </div>
+                    <div class="method-desc">リソース全体に対する操作<br>/users/search</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> config/routes.rb
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <span class="code-label">config/routes.rb</span>
+Rails.application.routes.draw <span class="highlight-blue">do</span>
+  <span class="highlight-pink"># 複数形（7つのアクション: index, show, new, create, edit, update, destroy）</span>
+  <span class="highlight-yellow">resources</span> :users <span class="highlight-blue">do</span>
+    <span class="highlight-yellow">member</span> <span class="highlight-blue">do</span>
+      post <span class="highlight-green">'activate'</span>    <span class="highlight-pink"># POST /users/:id/activate</span>
+      post <span class="highlight-green">'deactivate'</span>  <span class="highlight-pink"># POST /users/:id/deactivate</span>
+    <span class="highlight-blue">end</span>
+    
+    <span class="highlight-yellow">collection</span> <span class="highlight-blue">do</span>
+      get <span class="highlight-green">'search'</span>       <span class="highlight-pink"># GET /users/search</span>
+      get <span class="highlight-green">'export'</span>       <span class="highlight-pink"># GET /users/export</span>
+    <span class="highlight-blue">end</span>
+  <span class="highlight-blue">end</span>
+  
+  <span class="highlight-pink"># 単数形（6つのアクション: indexなし）</span>
+  <span class="highlight-yellow">resource</span> :profile     <span class="highlight-pink"># 自分のプロフィールのみ（/profile）</span>
+<span class="highlight-blue">end</span>
+            </div>
+        </div>
+
+        <!-- セッション・キャッシュの対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-memory mr-2"></i>セッション・キャッシュの対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">Rails.cache.write</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Cache::Store</span>
+                        <span class="family-badge child">write</span>
+                    </div>
+                    <div class="method-desc">キャッシュに書き込み</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">Rails.cache.read</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Cache::Store</span>
+                        <span class="family-badge child">read</span>
+                    </div>
+                    <div class="method-desc">キャッシュから読み込み</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
+                </div>
+            </div>
+
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">increment</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Cache::Store</span>
+                        <span class="family-badge child">increment</span>
+                    </div>
+                    <div class="method-desc">カウンタを増加</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">decrement</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Cache::Store</span>
+                        <span class="family-badge child">decrement</span>
+                    </div>
+                    <div class="method-desc">カウンタを減少</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <span class="code-label">キャッシュの使用例</span>
+<span class="highlight-pink"># キャッシュの読み書き</span>
+Rails.cache.<span class="highlight-yellow">write</span>(<span class="highlight-green">'user_count'</span>, User.count, expires_in: 1.hour)
+count = Rails.cache.<span class="highlight-yellow">read</span>(<span class="highlight-green">'user_count'</span>)
+
+<span class="highlight-pink"># fetchは読み込みと書き込みを同時に行う</span>
+users = Rails.cache.<span class="highlight-yellow">fetch</span>(<span class="highlight-green">'active_users'</span>, expires_in: 10.minutes) <span class="highlight-blue">do</span>
+  User.active.to_a  <span class="highlight-pink"># キャッシュがない場合のみ実行</span>
+<span class="highlight-blue">end</span>
+
+<span class="highlight-pink"># カウンターの操作</span>
+Rails.cache.<span class="highlight-yellow">increment</span>(<span class="highlight-green">'page_views'</span>)  <span class="highlight-pink"># +1</span>
+Rails.cache.<span class="highlight-yellow">decrement</span>(<span class="highlight-green">'stock_count'</span>) <span class="highlight-pink"># -1</span>
+
+<span class="highlight-pink"># セッションの操作（コントローラー内）</span>
+session[:user_id] = @user.id           <span class="highlight-pink"># セッションに保存</span>
+user_id = session[:user_id]            <span class="highlight-pink"># セッションから読み込み</span>
+session.delete(:user_id)               <span class="highlight-pink"># セッションから削除</span>
+            </div>
+        </div>
+
+        <!-- テスト系の対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-vial mr-2"></i>テスト系の対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">assert</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">Minitest</span>
+                        <span class="family-badge parent">ActiveSupport::TestCase</span>
+                        <span class="family-badge child">assert</span>
+                    </div>
+                    <div class="method-desc">trueであることを確認</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> test/ディレクトリ
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">assert_not</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">Minitest</span>
+                        <span class="family-badge parent">ActiveSupport::TestCase</span>
+                        <span class="family-badge child">assert_not</span>
+                    </div>
+                    <div class="method-desc">falseであることを確認</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> test/ディレクトリ
+                    </div>
+                </div>
+            </div>
+
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">assert_difference</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Testing::Assertions</span>
+                        <span class="family-badge child">assert_difference</span>
+                    </div>
+                    <div class="method-desc">値が変化することを確認</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> test/ディレクトリ
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">assert_no_difference</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Testing::Assertions</span>
+                        <span class="family-badge child">assert_no_difference</span>
+                    </div>
+                    <div class="method-desc">値が変化しないことを確認</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> test/ディレクトリ
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <span class="code-label">test/models/user_test.rb</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">UserTest</span> < ActiveSupport::TestCase
+  test <span class="highlight-green">"should save valid user"</span> <span class="highlight-blue">do</span>
+    user = User.new(name: <span class="highlight-green">"Test"</span>, email: <span class="highlight-green">"test@example.com"</span>)
+    <span class="highlight-yellow">assert</span> user.save
+    <span class="highlight-yellow">assert_not</span> user.new_record?
+  <span class="highlight-blue">end</span>
+  
+  test <span class="highlight-green">"should increase user count"</span> <span class="highlight-blue">do</span>
+    <span class="highlight-yellow">assert_difference</span> <span class="highlight-green">'User.count'</span>, 1 <span class="highlight-blue">do</span>
+      User.create(name: <span class="highlight-green">"New User"</span>, email: <span class="highlight-green">"new@example.com"</span>)
+    <span class="highlight-blue">end</span>
+  <span class="highlight-blue">end</span>
+  
+  test <span class="highlight-green">"should not save invalid user"</span> <span class="highlight-blue">do</span>
+    <span class="highlight-yellow">assert_no_difference</span> <span class="highlight-green">'User.count'</span> <span class="highlight-blue">do</span>
+      User.create(name: <span class="highlight-green">""</span>)  <span class="highlight-pink"># 無効なユーザー</span>
+    <span class="highlight-blue">end</span>
+  <span class="highlight-blue">end</span>
+<span class="highlight-blue">end</span>
+            </div>
+        </div>
+
+        <!-- 時間・日付系の対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-calendar-alt mr-2"></i>時間・日付系の対
+            </div>
+            
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">ago</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Duration</span>
+                        <span class="family-badge child">ago</span>
+                    </div>
+                    <div class="method-desc">〜前<br>3.days.ago</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">from_now / since</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::Duration</span>
+                        <span class="family-badge child">from_now</span>
+                    </div>
+                    <div class="method-desc">〜後<br>3.days.from_now</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
+                </div>
+            </div>
+
+            <div class="pair-container">
+                <div class="method-box">
+                    <div class="method-name">beginning_of_day</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::TimeWithZone</span>
+                        <span class="family-badge child">beginning_of_day</span>
+                    </div>
+                    <div class="method-desc">その日の開始時刻<br>00:00:00</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
+                </div>
+                <div class="arrow-container">↔</div>
+                <div class="method-box">
+                    <div class="method-name">end_of_day</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveSupport</span>
+                        <span class="family-badge parent">ActiveSupport::TimeWithZone</span>
+                        <span class="family-badge child">end_of_day</span>
+                    </div>
+                    <div class="method-desc">その日の終了時刻<br>23:59:59</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> どこでも使用可能
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-example">
+                <span class="code-label">時間操作の例</span>
+<span class="highlight-pink"># 過去と未来</span>
+3.days.<span class="highlight-yellow">ago</span>                     <span class="highlight-pink"># 3日前</span>
+3.days.<span class="highlight-yellow">from_now</span>                <span class="highlight-pink"># 3日後</span>
+1.month.<span class="highlight-yellow">ago</span>                    <span class="highlight-pink"># 1ヶ月前</span>
+1.year.<span class="highlight-yellow">from_now</span>                <span class="highlight-pink"># 1年後</span>
+
+<span class="highlight-pink"># 期間の開始と終了</span>
+Time.current.<span class="highlight-yellow">beginning_of_day</span>   <span class="highlight-pink"># 今日の00:00:00</span>
+Time.current.<span class="highlight-yellow">end_of_day</span>         <span class="highlight-pink"># 今日の23:59:59</span>
+Time.current.<span class="highlight-yellow">beginning_of_week</span>  <span class="highlight-pink"># 今週の月曜日</span>
+Time.current.<span class="highlight-yellow">end_of_week</span>        <span class="highlight-pink"># 今週の日曜日</span>
+Time.current.<span class="highlight-yellow">beginning_of_month</span> <span class="highlight-pink"># 今月の1日</span>
+Time.current.<span class="highlight-yellow">end_of_month</span>       <span class="highlight-pink"># 今月の最終日</span>
+
+<span class="highlight-pink"># 実用例：今日の注文を取得</span>
+Order.where(created_at: Time.current.<span class="highlight-yellow">beginning_of_day</span>..Time.current.<span class="highlight-yellow">end_of_day</span>)
+            </div>
+        </div>
+
+        <!-- WebSocket (ActionCable)系の対 -->
+        <div class="card">
+            <div class="category-header">
+                <i class="fas fa-plug mr-2"></i>WebSocket (ActionCable)系の対
             </div>
             
             <div class="pair-container">
                 <div class="method-box">
                     <div class="method-name">subscribe</div>
-                    <div class="method-desc">購読する</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionCable</span>
+                        <span class="family-badge parent">ActionCable::Channel::Base</span>
+                        <span class="family-badge child">subscribe</span>
+                    </div>
+                    <div class="method-desc">チャンネル購読</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> app/channels/
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
                     <div class="method-name">unsubscribe</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActionCable</span>
+                        <span class="family-badge parent">ActionCable::Channel::Base</span>
+                        <span class="family-badge child">unsubscribe</span>
+                    </div>
                     <div class="method-desc">購読解除</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> app/channels/
+                    </div>
                 </div>
             </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">login</div>
-                    <div class="method-desc">ログイン</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">logout</div>
-                    <div class="method-desc">ログアウト</div>
-                </div>
+
+            <div class="code-example">
+                <span class="code-label">app/channels/chat_channel.rb</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">ChatChannel</span> < ApplicationCable::Channel
+  <span class="highlight-blue">def</span> <span class="highlight-yellow">subscribed</span>
+    stream_from <span class="highlight-green">"chat_</span>#{params[:room_id]}<span class="highlight-green">"</span>
+    @room = Room.find(params[:room_id])
+    @room.increment!(:active_users)
+  <span class="highlight-blue">end</span>
+  
+  <span class="highlight-blue">def</span> <span class="highlight-yellow">unsubscribed</span>
+    @room.decrement!(:active_users)
+  <span class="highlight-blue">end</span>
+  
+  <span class="highlight-blue">def</span> <span class="highlight-green">speak</span>(data)
+    ActionCable.server.broadcast(
+      <span class="highlight-green">"chat_</span>#{params[:room_id]}<span class="highlight-green">"</span>,
+      message: data[<span class="highlight-green">'message'</span>]
+    )
+  <span class="highlight-blue">end</span>
+<span class="highlight-blue">end</span>
             </div>
         </div>
 
-        <!-- 増減の対 -->
+        <!-- ActiveStorage（ファイル管理）の対 -->
         <div class="card">
             <div class="category-header">
-                <i class="fas fa-plus-minus mr-2"></i>増減・カウントの対
+                <i class="fas fa-file-upload mr-2"></i>ActiveStorage（ファイル管理）の対
             </div>
             
             <div class="pair-container">
                 <div class="method-box">
-                    <div class="method-name">increment</div>
-                    <div class="method-desc">増加（+1）</div>
+                    <div class="method-name">attach</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveStorage</span>
+                        <span class="family-badge parent">ActiveStorage::Attached</span>
+                        <span class="family-badge child">attach</span>
+                    </div>
+                    <div class="method-desc">ファイル添付</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデル/コントローラー
+                    </div>
                 </div>
                 <div class="arrow-container">↔</div>
                 <div class="method-box">
-                    <div class="method-name">decrement</div>
-                    <div class="method-desc">減少（-1）</div>
+                    <div class="method-name">purge</div>
+                    <div class="method-hierarchy">
+                        <span class="family-badge grandparent">ActiveStorage</span>
+                        <span class="family-badge parent">ActiveStorage::Attached</span>
+                        <span class="family-badge child">purge</span>
+                    </div>
+                    <div class="method-desc">ファイル削除</div>
+                    <div class="method-location">
+                        <i class="fas fa-file-code"></i> モデル/コントローラー
+                    </div>
                 </div>
             </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">push / <<</div>
-                    <div class="method-desc">配列に追加</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">pop</div>
-                    <div class="method-desc">配列から取り出し</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">shift</div>
-                    <div class="method-desc">先頭から取り出し</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">unshift</div>
-                    <div class="method-desc">先頭に追加</div>
-                </div>
-            </div>
-            
-            <div class="pair-container">
-                <div class="method-box">
-                    <div class="method-name">minimum</div>
-                    <div class="method-desc">最小値</div>
-                </div>
-                <div class="arrow-container">↔</div>
-                <div class="method-box">
-                    <div class="method-name">maximum</div>
-                    <div class="method-desc">最大値</div>
-                </div>
+
+            <div class="code-example">
+                <span class="code-label">app/models/user.rb & コントローラー</span>
+<span class="highlight-pink"># モデルでの定義</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">User</span> < ApplicationRecord
+  has_one_attached :avatar
+  has_many_attached :documents
+<span class="highlight-blue">end</span>
+
+<span class="highlight-pink"># ファイルの添付と削除</span>
+@user.avatar.<span class="highlight-yellow">attach</span>(params[:avatar])     <span class="highlight-pink"># ファイル添付</span>
+@user.avatar.<span class="highlight-yellow">purge</span>                      <span class="highlight-pink"># 即座に削除</span>
+@user.avatar.<span class="highlight-yellow">purge_later</span>                <span class="highlight-pink"># 非同期で削除</span>
+
+<span class="highlight-pink"># 添付確認</span>
+<span class="highlight-blue">if</span> @user.avatar.<span class="highlight-yellow">attached?</span>
+  <span class="highlight-pink"># ファイルが添付されている</span>
+<span class="highlight-blue">end</span>
             </div>
         </div>
 
         <!-- まとめ -->
         <div class="card">
             <div class="category-header">
-                <i class="fas fa-graduation-cap mr-2"></i>対になるメソッドの設計思想
+                <i class="fas fa-graduation-cap mr-2"></i>対になるメソッドの設計思想と学習のコツ
             </div>
             
             <div class="explanation">
-                <h3 class="text-xl font-bold mb-3">なぜRailsには対になるメソッドが多いのか？</h3>
+                <h3 class="text-xl font-bold mb-4">なぜRailsには対になるメソッドが多いのか？</h3>
                 
-                <div class="mb-4">
-                    <h4 class="font-bold text-lg mb-2">1. 直感的な操作性</h4>
-                    <p>「作成」があれば「削除」がある、「開始」があれば「終了」がある。
-                    人間の思考パターンに合わせて設計されています。</p>
-                </div>
-                
-                <div class="mb-4">
-                    <h4 class="font-bold text-lg mb-2">2. 対称性による記憶のしやすさ</h4>
-                    <p>一方を覚えれば、もう一方も推測できる。学習コストを下げる設計です。</p>
-                </div>
-                
-                <div class="mb-4">
-                    <h4 class="font-bold text-lg mb-2">3. 完全性の保証</h4>
-                    <p>「開く」処理には必ず「閉じる」処理が必要。リソースの適切な管理を促します。</p>
-                </div>
-                
-                <div class="mb-4">
-                    <h4 class="font-bold text-lg mb-2">4. エラー処理の簡潔性</h4>
-                    <p>before/afterの対により、エラーが起きても確実に後処理ができます。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">
+                            <i class="fas fa-brain text-purple-500 mr-2"></i>
+                            1. 直感的な操作性
+                        </h4>
+                        <p>「作成」があれば「削除」がある。人間の思考パターンに合わせた設計。</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">
+                            <i class="fas fa-memory text-blue-500 mr-2"></i>
+                            2. 記憶のしやすさ
+                        </h4>
+                        <p>一方を覚えれば、もう一方も推測可能。学習コストを大幅に削減。</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">
+                            <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                            3. 完全性の保証
+                        </h4>
+                        <p>「開く」には必ず「閉じる」が必要。リソースの適切な管理を促進。</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-lg mb-2">
+                            <i class="fas fa-bug text-red-500 mr-2"></i>
+                            4. エラー処理の簡潔性
+                        </h4>
+                        <p>before/afterの対により、エラーが起きても確実に後処理を実行。</p>
+                    </div>
                 </div>
             </div>
             
+            <div class="tip-box">
+                <h4 class="font-bold text-lg mb-3">
+                    <i class="fas fa-rocket text-green-600 mr-2"></i>
+                    初心者が対になるメソッドを習得するコツ
+                </h4>
+                <ol class="list-decimal list-inside space-y-2">
+                    <li><strong>パターンを覚える：</strong>before_*/after_*、add_*/remove_*など</li>
+                    <li><strong>継承関係を理解：</strong>どのクラスから来ているメソッドか確認</li>
+                    <li><strong>記述場所を把握：</strong>モデル、コントローラー、ビュー、設定ファイルのどこに書くか</li>
+                    <li><strong>実際に使ってみる：</strong>rails consoleで試してみる</li>
+                    <li><strong>エラーメッセージを読む：</strong>対になるメソッドの使い方のヒントが含まれている</li>
+                </ol>
+            </div>
+
             <div class="code-example">
-<span class="highlight-pink"># 対になるメソッドの美しさ</span>
-<span class="highlight-blue">class</span> User
-  <span class="highlight-green">before_create</span> :generate_token    <span class="highlight-pink"># 作成前にトークン生成</span>
-  <span class="highlight-green">after_create</span>  :send_welcome_mail  <span class="highlight-pink"># 作成後にメール送信</span>
+                <span class="code-label">対になるメソッドの美しい例</span>
+<span class="highlight-blue">class</span> <span class="highlight-orange">Order</span> < ApplicationRecord
+  <span class="highlight-pink"># 作成と削除の対</span>
+  <span class="highlight-yellow">before_create</span> :reserve_stock    <span class="highlight-pink"># 作成前：在庫を確保</span>
+  <span class="highlight-yellow">after_create</span>  :send_confirmation <span class="highlight-pink"># 作成後：確認メール送信</span>
   
-  <span class="highlight-green">before_destroy</span> :check_dependencies <span class="highlight-pink"># 削除前に依存関係チェック</span>
-  <span class="highlight-green">after_destroy</span>  :cleanup_files      <span class="highlight-pink"># 削除後にファイル削除</span>
+  <span class="highlight-yellow">before_destroy</span> :check_status     <span class="highlight-pink"># 削除前：ステータス確認</span>
+  <span class="highlight-yellow">after_destroy</span>  :release_stock    <span class="highlight-pink"># 削除後：在庫を解放</span>
+  
+  <span class="highlight-pink"># トランザクションの対称性</span>
+  <span class="highlight-blue">def</span> <span class="highlight-green">process_payment</span>
+    transaction <span class="highlight-blue">do</span>               <span class="highlight-pink"># 開始</span>
+      payment.<span class="highlight-yellow">charge!</span>
+      self.<span class="highlight-yellow">update!</span>(paid: <span class="highlight-blue">true</span>)
+      send_receipt
+    <span class="highlight-blue">end</span>                          <span class="highlight-pink"># 終了（成功→commit、失敗→rollback）</span>
+  <span class="highlight-blue">rescue</span> => e
+    Rails.logger.error e.message
+    <span class="highlight-blue">raise</span>
+  <span class="highlight-blue">end</span>
 <span class="highlight-blue">end</span>
 
-<span class="highlight-pink"># トランザクションの対称性</span>
-User.transaction <span class="highlight-blue">do</span>           <span class="highlight-pink"># 開始</span>
-  user.save!
-  account.save!
-<span class="highlight-blue">end</span>                          <span class="highlight-pink"># 終了（成功ならcommit、失敗ならrollback）</span>
+<span class="highlight-pink"># 対になるメソッドを活用した実装</span>
+<span class="highlight-blue">if</span> @order.<span class="highlight-yellow">valid?</span>                  <span class="highlight-pink"># 有効なら</span>
+  @order.<span class="highlight-yellow">save</span>                     <span class="highlight-pink"># 保存</span>
+<span class="highlight-blue">elsif</span> @order.<span class="highlight-yellow">invalid?</span>            <span class="highlight-pink"># 無効なら</span>
+  render :new                      <span class="highlight-pink"># 再表示</span>
+<span class="highlight-blue">end</span>
+
+<span class="highlight-pink"># リソースの適切な管理</span>
+file = File.<span class="highlight-yellow">open</span>(path)            <span class="highlight-pink"># 開く</span>
+process_file(file)
+file.<span class="highlight-yellow">close</span>                        <span class="highlight-pink"># 閉じる（必須）</span>
             </div>
         </div>
 
